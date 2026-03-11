@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 4eccea9f7f4ae79d74fde8349f8b8023df44e948. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev d79ca5296054058930bd97dd43540fd52ede15a3. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -653,6 +653,23 @@ in
         };
         model = lib.mkOption {
           type = t.nullOr (t.str);
+          default = null;
+        };
+        multimodal = lib.mkOption {
+          type = t.nullOr (t.submodule { options = {
+          enabled = lib.mkOption {
+            type = t.nullOr (t.bool);
+            default = null;
+          };
+          maxFileBytes = lib.mkOption {
+            type = t.nullOr (t.int);
+            default = null;
+          };
+          modalities = lib.mkOption {
+            type = t.nullOr (t.listOf (t.oneOf [ (t.enum [ "image" ]) (t.enum [ "audio" ]) (t.enum [ "all" ]) ]));
+            default = null;
+          };
+        }; });
           default = null;
         };
         outputDimensionality = lib.mkOption {
@@ -1415,6 +1432,23 @@ in
         };
         model = lib.mkOption {
           type = t.nullOr (t.str);
+          default = null;
+        };
+        multimodal = lib.mkOption {
+          type = t.nullOr (t.submodule { options = {
+          enabled = lib.mkOption {
+            type = t.nullOr (t.bool);
+            default = null;
+          };
+          maxFileBytes = lib.mkOption {
+            type = t.nullOr (t.int);
+            default = null;
+          };
+          modalities = lib.mkOption {
+            type = t.nullOr (t.listOf (t.oneOf [ (t.enum [ "image" ]) (t.enum [ "audio" ]) (t.enum [ "all" ]) ]));
+            default = null;
+          };
+        }; });
           default = null;
         };
         outputDimensionality = lib.mkOption {
