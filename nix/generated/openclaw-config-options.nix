@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 2acbea0da74a3ba722a033fab6085fd170177c86. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 65f05d7c098bcf349f9498208088a3045276a9d3. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -2804,14 +2804,10 @@ in
         type = t.str;
       };
       driver = lib.mkOption {
-        type = t.nullOr (t.oneOf [ (t.enum [ "openclaw" ]) (t.enum [ "clawd" ]) (t.enum [ "extension" ]) (t.enum [ "existing-session" ]) ]);
+        type = t.nullOr (t.oneOf [ (t.enum [ "openclaw" ]) (t.enum [ "clawd" ]) (t.enum [ "existing-session" ]) ]);
         default = null;
       };
     }; }));
-      default = null;
-    };
-    relayBindHost = lib.mkOption {
-      type = t.nullOr (t.oneOf [ (t.str) (t.str) ]);
       default = null;
     };
     remoteCdpHandshakeTimeoutMs = lib.mkOption {
@@ -12814,6 +12810,18 @@ in
         type = t.nullOr (t.str);
         default = null;
       };
+      marketplaceName = lib.mkOption {
+        type = t.nullOr (t.str);
+        default = null;
+      };
+      marketplacePlugin = lib.mkOption {
+        type = t.nullOr (t.str);
+        default = null;
+      };
+      marketplaceSource = lib.mkOption {
+        type = t.nullOr (t.str);
+        default = null;
+      };
       resolvedAt = lib.mkOption {
         type = t.nullOr (t.str);
         default = null;
@@ -12835,7 +12843,7 @@ in
         default = null;
       };
       source = lib.mkOption {
-        type = t.oneOf [ (t.enum [ "npm" ]) (t.enum [ "archive" ]) (t.enum [ "path" ]) ];
+        type = t.oneOf [ (t.oneOf [ (t.enum [ "npm" ]) (t.enum [ "archive" ]) (t.enum [ "path" ]) ]) (t.enum [ "marketplace" ]) ];
       };
       sourcePath = lib.mkOption {
         type = t.nullOr (t.str);
