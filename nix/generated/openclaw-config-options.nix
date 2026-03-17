@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 3e8bf845cbeb1e5da16e9b2b16d4d87621966f5a. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev f036ed27f427f53d3888f63bc09b77913f0f8927. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -12991,6 +12991,19 @@ in
         type = t.nullOr (t.submodule { options = {
         allowPromptInjection = lib.mkOption {
           type = t.nullOr (t.bool);
+          default = null;
+        };
+      }; });
+        default = null;
+      };
+      subagent = lib.mkOption {
+        type = t.nullOr (t.submodule { options = {
+        allowModelOverride = lib.mkOption {
+          type = t.nullOr (t.bool);
+          default = null;
+        };
+        allowedModels = lib.mkOption {
+          type = t.nullOr (t.listOf (t.str));
           default = null;
         };
       }; });
