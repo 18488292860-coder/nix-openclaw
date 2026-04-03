@@ -22,6 +22,7 @@ link_agent() {
   current="$(/usr/bin/readlink "$target" 2>/dev/null || true)"
 
   if [ "$current" != "$candidate" ]; then
+    /bin/mkdir -p "$(/usr/bin/dirname "$target")"
     /bin/ln -sfn "$candidate" "$target"
     /bin/launchctl bootout "gui/$UID" "$target" 2>/dev/null || true
     /bin/launchctl bootstrap "gui/$UID" "$target" 2>/dev/null || true

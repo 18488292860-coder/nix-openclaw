@@ -9,8 +9,10 @@ rm -rf "$home_dir"
 mkdir -p "$home_dir"
 
 export HOME="$home_dir"
-export USER="${USER:-runner}"
-export LOGNAME="$USER"
+export USER="runner"
+export LOGNAME="runner"
+
+mkdir -p "$HOME/Library/LaunchAgents"
 
 cd "$test_dir"
 

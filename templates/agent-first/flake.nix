@@ -16,7 +16,7 @@
       nix-openclaw,
     }:
     let
-      # REPLACE: aarch64-darwin (Apple Silicon), x86_64-darwin (Intel), or x86_64-linux
+      # REPLACE: aarch64-darwin (Apple Silicon) or x86_64-linux
       system = "<system>";
       pkgs = import nixpkgs {
         inherit system;

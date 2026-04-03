@@ -37,6 +37,28 @@ check_no_broken_symlinks() {
   rm -f "$broken_tmp"
 }
 
+remove_broken_bin_symlinks() {
+  root="$1"
+  if [ ! -d "$root" ]; then
+    return 0
+  fi
+
+  broken_tmp="$(mktemp)"
+  find "$root" -path "*/node_modules/.bin/*" -type l -print | while IFS= read -r link; do
+    [ -e "$link" ] || printf '%s\n' "$link"
+  done > "$broken_tmp"
+
+  if [ ! -s "$broken_tmp" ]; then
+    rm -f "$broken_tmp"
+    return 0
+  fi
+
+  while IFS= read -r link; do
+    rm -f "$link"
+  done < "$broken_tmp"
+  rm -f "$broken_tmp"
+}
+
 mkdir -p "$out/lib/openclaw" "$out/bin"
 
 # Build dir is ephemeral in Nix; moving avoids an expensive deep copy of node_modules.
@@ -115,6 +137,7 @@ if [ -n "$hasown_src" ]; then
   fi
 fi
 
+log_step "remove broken nested .bin symlinks" remove_broken_bin_symlinks "$out/lib/openclaw/node_modules"
 log_step "validate node_modules symlinks" check_no_broken_symlinks "$out/lib/openclaw/node_modules"
 
 bash -e -c '. "$STDENV_SETUP"; makeWrapper "$NODE_BIN" "$out/bin/openclaw" --add-flags "$out/lib/openclaw/dist/index.js" --set-default OPENCLAW_NIX_MODE "1"'

@@ -77,19 +77,25 @@ if [ -d "node_modules/.pnpm/node_modules/.bin" ]; then
   export PATH="$PWD/node_modules/.pnpm/node_modules/.bin:$PATH"
 fi
 
-# Break down `pnpm build` (upstream package.json) so we can profile it.
-log_step "build: canvas:a2ui:bundle" pnpm canvas:a2ui:bundle
-log_step "build: tsdown" pnpm exec tsdown
-log_step "build: plugin-sdk dts" pnpm build:plugin-sdk:dts
-log_step "build: write-plugin-sdk-entry-dts" node --import tsx scripts/write-plugin-sdk-entry-dts.ts
-log_step "build: canvas-a2ui-copy" node --import tsx scripts/canvas-a2ui-copy.ts
-log_step "build: copy-hook-metadata" node --import tsx scripts/copy-hook-metadata.ts
-log_step "build: write-build-info" node --import tsx scripts/write-build-info.ts
-log_step "build: write-cli-compat" node --import tsx scripts/write-cli-compat.ts
+build_mode="${OPENCLAW_BUILD_MODE:-gateway}"
 
-log_step "ui:build" pnpm ui:build
+case "$build_mode" in
+  source-smoke)
+    log_step "build:strict-smoke" pnpm build:strict-smoke
+    ;;
+  gateway)
+    # Use upstream's declared package scripts so Nix does not maintain a partial
+    # copy of the OpenClaw build graph.
+    log_step "pnpm build" pnpm build
+    log_step "ui:build" pnpm ui:build
 
-log_step "pnpm prune --prod" env CI=true pnpm prune --prod
+    log_step "pnpm prune --prod" env CI=true pnpm prune --prod
+    ;;
+  *)
+    echo "Unknown OPENCLAW_BUILD_MODE: $build_mode" >&2
+    exit 1
+    ;;
+esac
 
 # Reduce output size (pnpm implementation detail; safe to remove)
 rm -rf node_modules/.pnpm/node_modules

@@ -28,6 +28,7 @@
       overlay = import ./nix/overlay.nix;
       sourceInfoStable = import ./nix/sources/openclaw-source.nix;
       systems = [
+        # Supported outputs for this repo.
         "x86_64-linux"
         "aarch64-darwin"
       ];
@@ -79,6 +80,9 @@
             // (
               if pkgs.stdenv.hostPlatform.isLinux then
                 {
+                  source-smoke = pkgs.callPackage ./nix/checks/openclaw-source-smoke.nix {
+                    sourceInfo = sourceInfoStable;
+                  };
                   gateway-tests = pkgs.callPackage ./nix/checks/openclaw-gateway-tests.nix {
                     sourceInfo = sourceInfoStable;
                   };

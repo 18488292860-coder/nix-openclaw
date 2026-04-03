@@ -18,6 +18,35 @@ log() {
   printf '>> %s\n' "$*"
 }
 
+build_with_hash_refresh() {
+  local attr="$1"
+  local label="$2"
+  local build_log
+  local pnpm_hash
+
+  build_log=$(mktemp)
+  log "Building ${label}"
+  if ! nix build ".#${attr}" --accept-flake-config >"$build_log" 2>&1; then
+    pnpm_hash=$(grep -Eo 'got: *sha256-[A-Za-z0-9+/=]+' "$build_log" | head -n 1 | sed 's/.*got: *//' || true)
+    if [[ -n "$pnpm_hash" ]]; then
+      log "pnpmDepsHash mismatch detected: $pnpm_hash"
+      perl -0pi -e "s|pnpmDepsHash = \"[^\"]*\";|pnpmDepsHash = \"${pnpm_hash}\";|" "$source_file"
+      if ! nix build ".#${attr}" --accept-flake-config >"$build_log" 2>&1; then
+        tail -n 200 "$build_log" >&2 || true
+        rm -f "$build_log"
+        return 1
+      fi
+    else
+      tail -n 200 "$build_log" >&2 || true
+      rm -f "$build_log"
+      return 1
+    fi
+  fi
+
+  rm -f "$build_log"
+  return 0
+}
+
 upstream_checks_green() {
   local sha="$1"
   local checks_json
@@ -76,7 +105,7 @@ if (
   set -euo pipefail
 
   log "Resolving openclaw main SHAs"
-  mapfile -t candidate_shas < <(gh api /repos/openclaw/openclaw/commits?per_page=10 | jq -r '.[].sha' || true)
+  mapfile -t candidate_shas < <(gh api /repos/openclaw/openclaw/commits?per_page=50 | jq -r '.[].sha' || true)
   if [[ ${#candidate_shas[@]} -eq 0 ]]; then
     latest_sha=$(git ls-remote https://github.com/openclaw/openclaw.git refs/heads/main | awk '{print $1}' || true)
     if [[ -z "$latest_sha" ]]; then
@@ -130,26 +159,13 @@ if (
     # Force a fresh pnpmDepsHash recalculation for the candidate rev.
     perl -0pi -e "s|pnpmDepsHash = \"[^\"]*\";|pnpmDepsHash = \"\";|" "$source_file"
 
-    build_log=$(mktemp)
-    log "Building gateway to validate pnpmDepsHash"
-    if ! nix build .#openclaw-gateway --accept-flake-config >"$build_log" 2>&1; then
-      pnpm_hash=$(grep -Eo 'got: *sha256-[A-Za-z0-9+/=]+' "$build_log" | head -n 1 | sed 's/.*got: *//' || true)
-      if [[ -n "$pnpm_hash" ]]; then
-        log "pnpmDepsHash mismatch detected: $pnpm_hash"
-        perl -0pi -e "s|pnpmDepsHash = \"[^\"]*\";|pnpmDepsHash = \"${pnpm_hash}\";|" "$source_file"
-        if ! nix build .#openclaw-gateway --accept-flake-config >"$build_log" 2>&1; then
-          tail -n 200 "$build_log" >&2 || true
-          rm -f "$build_log"
-          continue
-        fi
-      else
-        tail -n 200 "$build_log" >&2 || true
-        rm -f "$build_log"
-        continue
-      fi
+    if ! build_with_hash_refresh "checks.x86_64-linux.source-smoke" "source smoke to validate pnpmDepsHash"; then
+      continue
     fi
 
-    rm -f "$build_log"
+    if ! build_with_hash_refresh "openclaw-gateway" "gateway package"; then
+      continue
+    fi
     selected_sha="$sha"
     selected_hash="$source_hash"
     selected_source_store_path="$source_store_path"

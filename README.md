@@ -146,7 +146,7 @@ What I need you to do:
 My setup:
 - OS: [macOS / Linux]
 - CPU: [arm64 / x86_64]
-- System: [aarch64-darwin / x86_64-darwin / x86_64-linux]
+- System: [aarch64-darwin / x86_64-linux]
 - Home Manager config name: [FILL IN or "I don't have Home Manager yet"]
 
 Reference the README and templates/agent-first/flake.nix in the repo for the module options.
@@ -172,7 +172,7 @@ Your agent will install Nix, create your config, and get OpenClaw running. You j
    nix flake init -t github:openclaw/nix-openclaw#agent-first
    ```
 3. Edit `flake.nix` placeholders:
-   - `system` = `aarch64-darwin` (Apple Silicon) or `x86_64-darwin` (Intel)
+   - `system` = `aarch64-darwin` (Apple Silicon)
    - `home.username` and `home.homeDirectory`
    - `programs.openclaw.documents` with `AGENTS.md`, `SOUL.md`, `TOOLS.md` (optional: `IDENTITY.md`, `USER.md`, `LORE.md`, `HEARTBEAT.md`, `PROMPTING-EXAMPLES.md`)
    - Provider secrets (Telegram/Discord tokens, Anthropic API key)
