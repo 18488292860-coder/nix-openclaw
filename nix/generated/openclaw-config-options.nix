@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 2b548aa2b1d44304dbedb3fc529c54de941602c6. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 0ef29325edd5baa7b990ac1a49b35a7d29091e4c. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -1457,6 +1457,19 @@ in
       };
       verboseDefault = lib.mkOption {
         type = t.nullOr (t.oneOf [ (t.enum [ "off" ]) (t.enum [ "on" ]) (t.enum [ "full" ]) ]);
+        default = null;
+      };
+      videoGenerationModel = lib.mkOption {
+        type = t.nullOr (t.oneOf [ (t.str) (t.submodule { options = {
+        fallbacks = lib.mkOption {
+          type = t.nullOr (t.listOf (t.str));
+          default = null;
+        };
+        primary = lib.mkOption {
+          type = t.nullOr (t.str);
+          default = null;
+        };
+      }; }) ]);
         default = null;
       };
       workspace = lib.mkOption {
