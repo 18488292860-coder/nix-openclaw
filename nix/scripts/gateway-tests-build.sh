@@ -73,6 +73,16 @@ ensure_root_bin_link "tsdown" "../tsdown/dist/run.mjs"
 ensure_root_bin_link "tsx" "../tsx/dist/cli.mjs"
 ensure_root_bin_link "vitest" "../vitest/vitest.mjs"
 
+tsdown_cli="node_modules/tsdown/dist/run.mjs"
+if [ ! -f "$tsdown_cli" ]; then
+  tsdown_cli="$(find node_modules -path '*/tsdown/dist/run.mjs' -type f | head -n 1)"
+fi
+
+if [ -z "${tsdown_cli:-}" ] || [ ! -f "$tsdown_cli" ]; then
+  echo "tsdown CLI not found under ./node_modules" >&2
+  exit 1
+fi
+
 if [ -z "${STDENV_SETUP:-}" ]; then
   echo "STDENV_SETUP is not set" >&2
   exit 1
@@ -84,7 +94,7 @@ fi
 
 log_step "patchShebangs node_modules/.bin" bash -e -c ". \"$STDENV_SETUP\"; patchShebangs node_modules/.bin"
 
-log_step "node scripts/tsdown-build.mjs" node scripts/tsdown-build.mjs
+log_step "node $tsdown_cli" node "$tsdown_cli" --config-loader unrun --logLevel warn
 log_step "node scripts/runtime-postbuild.mjs" node scripts/runtime-postbuild.mjs
 log_step "node scripts/build-stamp.mjs" node scripts/build-stamp.mjs
 log_step "pnpm build:plugin-sdk:dts" pnpm build:plugin-sdk:dts
