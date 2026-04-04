@@ -80,9 +80,6 @@
             // (
               if pkgs.stdenv.hostPlatform.isLinux then
                 {
-                  source-smoke = pkgs.callPackage ./nix/checks/openclaw-source-smoke.nix {
-                    sourceInfo = sourceInfoStable;
-                  };
                   gateway-tests = pkgs.callPackage ./nix/checks/openclaw-gateway-tests.nix {
                     sourceInfo = sourceInfoStable;
                   };

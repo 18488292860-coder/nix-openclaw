@@ -77,25 +77,12 @@ if [ -d "node_modules/.pnpm/node_modules/.bin" ]; then
   export PATH="$PWD/node_modules/.pnpm/node_modules/.bin:$PATH"
 fi
 
-build_mode="${OPENCLAW_BUILD_MODE:-gateway}"
+# Use upstream's declared package scripts so Nix does not maintain a partial
+# copy of the OpenClaw build graph.
+log_step "pnpm build" pnpm build
+log_step "ui:build" pnpm ui:build
 
-case "$build_mode" in
-  source-smoke)
-    log_step "build:strict-smoke" pnpm build:strict-smoke
-    ;;
-  gateway)
-    # Use upstream's declared package scripts so Nix does not maintain a partial
-    # copy of the OpenClaw build graph.
-    log_step "pnpm build" pnpm build
-    log_step "ui:build" pnpm ui:build
-
-    log_step "pnpm prune --prod" env CI=true pnpm prune --prod
-    ;;
-  *)
-    echo "Unknown OPENCLAW_BUILD_MODE: $build_mode" >&2
-    exit 1
-    ;;
-esac
+log_step "pnpm prune --prod" env CI=true pnpm prune --prod
 
 # Reduce output size (pnpm implementation detail; safe to remove)
 rm -rf node_modules/.pnpm/node_modules

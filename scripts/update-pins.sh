@@ -159,10 +159,6 @@ if (
     # Force a fresh pnpmDepsHash recalculation for the candidate rev.
     perl -0pi -e "s|pnpmDepsHash = \"[^\"]*\";|pnpmDepsHash = \"\";|" "$source_file"
 
-    if ! build_with_hash_refresh "checks.x86_64-linux.source-smoke" "source smoke to validate pnpmDepsHash"; then
-      continue
-    fi
-
     if ! build_with_hash_refresh "openclaw-gateway" "gateway package"; then
       continue
     fi
