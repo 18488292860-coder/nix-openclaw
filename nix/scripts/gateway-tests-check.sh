@@ -18,12 +18,6 @@ mkdir -p /tmp/openclaw || true
 chmod 700 /tmp/openclaw || true
 unset OPENCLAW_BUNDLED_PLUGINS_DIR
 PATH="$PWD/node_modules/.bin:$PATH"
-
-vitest_bin="$PWD/node_modules/.bin/vitest"
-if [ -x "$vitest_bin" ]; then
-  exec "$vitest_bin" run --config vitest.gateway.config.ts --testTimeout=20000
-fi
-
 vitest_cli="$PWD/node_modules/vitest/vitest.mjs"
 if [ ! -f "$vitest_cli" ]; then
   vitest_cli="$(find "$PWD/node_modules" -path '*/vitest/vitest.mjs' -type f | head -n 1)"
