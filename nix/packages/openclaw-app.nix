@@ -10,7 +10,7 @@ stdenvNoCC.mkDerivation {
 
   src = fetchzip {
     url = "https://github.com/openclaw/openclaw/releases/download/v2026.4.2/OpenClaw-2026.4.2.zip";
-    hash = "sha256-srxXVwtRGBunCEnFRfJFEd2+TjB8o5IzDGIh9yphUZE=";
+    hash = "sha256-H52Zup6/tlPjJYf2aC/HKeORRml+0PSV1MRGha32O28=";
     stripRoot = false;
   };
 
