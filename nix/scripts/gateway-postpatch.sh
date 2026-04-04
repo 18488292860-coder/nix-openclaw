@@ -84,6 +84,22 @@ PY
   fi
 fi
 
+if [ -f src/gateway/server.shared-auth-rotation.test.ts ]; then
+  if ! grep -q 'process.env.OPENCLAW_GATEWAY_TOKEN = OLD_TOKEN;' src/gateway/server.shared-auth-rotation.test.ts; then
+    python3 - <<'PY'
+from pathlib import Path
+
+path = Path("src/gateway/server.shared-auth-rotation.test.ts")
+text = path.read_text()
+old = """beforeAll(async () => {\n  port = await getFreePort();\n  testState.gatewayAuth = { mode: \"token\", token: OLD_TOKEN };\n  server = await startGatewayServer(port, { controlUiEnabled: true });\n});\n"""
+new = """beforeAll(async () => {\n  port = await getFreePort();\n  testState.gatewayAuth = { mode: \"token\", token: OLD_TOKEN };\n  process.env.OPENCLAW_GATEWAY_TOKEN = OLD_TOKEN;\n  server = await startGatewayServer(port, { controlUiEnabled: true });\n});\n"""
+if old not in text:
+    raise SystemExit("expected shared auth beforeAll block not found")
+path.write_text(text.replace(old, new, 1))
+PY
+  fi
+fi
+
 if [ -f src/gateway/test-helpers.mocks.ts ]; then
   if ! grep -q "DEFAULT_MODEL" src/gateway/test-helpers.mocks.ts; then
     python3 - <<'PY'
@@ -101,6 +117,44 @@ new = '      model: { primary: `${DEFAULT_PROVIDER}/${DEFAULT_MODEL}` },\n'
 if old not in text:
     raise SystemExit("expected test helper default model not found")
 path.write_text(text.replace(old, new, 1))
+PY
+  fi
+fi
+
+if [ -f src/gateway/test-helpers.mocks.ts ]; then
+  if ! grep -q 'speechProviders: \[\],' src/gateway/test-helpers.mocks.ts; then
+    python3 - <<'PY'
+from pathlib import Path
+
+path = Path("src/gateway/test-helpers.mocks.ts")
+text = path.read_text()
+old = """  speechProviders: [\n    {\n      pluginId: \"openai\",\n      source: \"test\",\n      provider: createStubSpeechProvider({\n        id: \"openai\",\n        label: \"OpenAI\",\n        voices: [\"alloy\", \"nova\"],\n      }),\n    },\n    {\n      pluginId: \"elevenlabs\",\n      source: \"test\",\n      provider: createStubSpeechProvider({\n        id: \"elevenlabs\",\n        label: \"ElevenLabs\",\n        voices: [\"EXAVITQu4vr4xnSDxMaL\", \"voice-default\"],\n      }),\n    },\n  ],\n"""
+new = """  speechProviders: [],\n"""
+if old not in text:
+    raise SystemExit("expected default speechProviders block not found")
+path.write_text(text.replace(old, new, 1))
+PY
+  fi
+fi
+
+if [ -f src/gateway/server.reload.test.ts ]; then
+  if ! grep -q 'allowInsecurePath: true,' src/gateway/server.reload.test.ts; then
+    python3 - <<'PY'
+from pathlib import Path
+
+path = Path("src/gateway/server.reload.test.ts")
+text = path.read_text()
+old1 = """          vault: {\n            source: \"exec\",\n            command: process.execPath,\n            allowSymlinkCommand: true,\n            args: [params.resolverScriptPath, params.modePath, params.tokenValue],\n          },\n"""
+new1 = """          vault: {\n            source: \"exec\",\n            command: process.execPath,\n            allowSymlinkCommand: true,\n            allowInsecurePath: true,\n            args: [params.resolverScriptPath, params.modePath, params.tokenValue],\n          },\n"""
+old2 = """          vault: {\n            source: \"exec\",\n            command: process.execPath,\n            allowSymlinkCommand: true,\n            args: [resolverScriptPath, tokenPath],\n          },\n"""
+new2 = """          vault: {\n            source: \"exec\",\n            command: process.execPath,\n            allowSymlinkCommand: true,\n            allowInsecurePath: true,\n            args: [resolverScriptPath, tokenPath],\n          },\n"""
+if old1 not in text:
+    raise SystemExit("expected gateway token exec ref config block not found")
+if old2 not in text:
+    raise SystemExit("expected keep-last-known-good auth config block not found")
+text = text.replace(old1, new1, 1)
+text = text.replace(old2, new2, 1)
+path.write_text(text)
 PY
   fi
 fi
