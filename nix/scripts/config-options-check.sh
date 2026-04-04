@@ -49,7 +49,11 @@ fi
 
 tsx_cli="./node_modules/tsx/dist/cli.mjs"
 if [ ! -f "$tsx_cli" ]; then
-  echo "tsx CLI not found at $tsx_cli (run gateway-tests-build.sh first)" >&2
+  tsx_cli="$(find ./node_modules -path '*/tsx/dist/cli.mjs' -type f | head -n 1)"
+fi
+
+if [ -z "${tsx_cli:-}" ] || [ ! -f "$tsx_cli" ]; then
+  echo "tsx CLI not found under ./node_modules (run gateway-tests-build.sh first)" >&2
   exit 1
 fi
 

@@ -37,6 +37,28 @@ export HOME="$(mktemp -d)"
 
 log_step "pnpm install (tests/config)" pnpm install --offline --frozen-lockfile --ignore-scripts --prod=false --store-dir "$store_path"
 
+ensure_root_package_link() {
+  pkg="$1"
+  root_path="node_modules/$pkg"
+
+  if [ -e "$root_path" ]; then
+    return 0
+  fi
+
+  pkg_dir="$(find node_modules/.pnpm -path "*/node_modules/$pkg" -type d | head -n 1)"
+  if [ -z "$pkg_dir" ]; then
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$root_path")"
+  ln -s "$pkg_dir" "$root_path"
+}
+
+# Offline hoisted installs in Nix can leave the top-level package link missing
+# while the package still exists under node_modules/.pnpm.
+ensure_root_package_link "tsx"
+ensure_root_package_link "vitest"
+
 if [ -z "${STDENV_SETUP:-}" ]; then
   echo "STDENV_SETUP is not set" >&2
   exit 1
