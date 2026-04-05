@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 01c5dde6d1d73a3563297f73cdf645e9a28d2b42. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 5da21bc2f7c227f011b68027ced4b48cd5235b40. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -6471,22 +6471,6 @@ in
           type = t.enum [ "exec" ];
         };
       }; }) ]) ]);
-        default = null;
-      };
-      modelId = lib.mkOption {
-        type = t.nullOr (t.str);
-        default = null;
-      };
-      outputFormat = lib.mkOption {
-        type = t.nullOr (t.str);
-        default = null;
-      };
-      voiceAliases = lib.mkOption {
-        type = t.nullOr (t.attrsOf (t.str));
-        default = null;
-      };
-      voiceId = lib.mkOption {
-        type = t.nullOr (t.str);
         default = null;
       };
     }; }));
