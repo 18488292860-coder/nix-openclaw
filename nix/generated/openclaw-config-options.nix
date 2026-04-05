@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 749ed86fe3d60ed119f4a5062026b8bb3c31c045. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 19de5d1b569dce2375a2692b4cf62dca385fd351. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -4943,35 +4943,6 @@ in
 
   models = lib.mkOption {
     type = t.nullOr (t.submodule { options = {
-    bedrockDiscovery = lib.mkOption {
-      type = t.nullOr (t.submodule { options = {
-      defaultContextWindow = lib.mkOption {
-        type = t.nullOr (t.int);
-        default = null;
-      };
-      defaultMaxTokens = lib.mkOption {
-        type = t.nullOr (t.int);
-        default = null;
-      };
-      enabled = lib.mkOption {
-        type = t.nullOr (t.bool);
-        default = null;
-      };
-      providerFilter = lib.mkOption {
-        type = t.nullOr (t.listOf (t.str));
-        default = null;
-      };
-      refreshInterval = lib.mkOption {
-        type = t.nullOr (t.int);
-        default = null;
-      };
-      region = lib.mkOption {
-        type = t.nullOr (t.str);
-        default = null;
-      };
-    }; });
-      default = null;
-    };
     mode = lib.mkOption {
       type = t.nullOr (t.oneOf [ (t.enum [ "merge" ]) (t.enum [ "replace" ]) ]);
       default = null;
