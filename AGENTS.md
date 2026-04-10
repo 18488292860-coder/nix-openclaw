@@ -54,13 +54,14 @@ OpenClaw packaging:
 
 Golden path for pins (yolo + manual bumps):
 - Hourly GitHub Action **Yolo Update Pins** runs `scripts/update-pins.sh`, which:
-  - Picks latest upstream openclaw SHA with green non-Windows checks
+  - Picks the latest stable upstream OpenClaw release tag with the macOS zip asset
+  - Resolves the source pin from that release tag ref, not upstream `main`
   - Rebuilds gateway to refresh `pnpmDepsHash`
-  - Regenerates `nix/generated/openclaw-config-options.nix` from upstream schema
+  - Regenerates `nix/generated/openclaw-config-options.nix` from that release source
   - Updates app pin/hash, commits, rebases, pushes to `main`
-- Manual bump (rare): `GH_TOKEN=... scripts/update-pins.sh` (same steps as above). Use only if yolo is blocked.
-- To verify freshness: `git pull --ff-only` and check `nix/sources/openclaw-source.nix` vs `git ls-remote https://github.com/openclaw/openclaw.git refs/heads/main`.
-- If upstream is moving fast and tighter freshness is needed, trigger yolo manually: `gh workflow run "Yolo Update Pins"`.
+- Manual bump (rare): trigger yolo manually with `gh workflow run "Yolo Update Pins"`.
+- To verify freshness: `git pull --ff-only`, compare `nix/packages/openclaw-app.nix` to `gh release view --repo openclaw/openclaw --json tagName`, and compare `nix/sources/openclaw-source.nix` to `git ls-remote https://github.com/openclaw/openclaw.git "refs/tags/<tag>" "refs/tags/<tag>^{}"`.
+- Recovery note: repin to the latest stable OpenClaw release first, fix Nix-owned seams before touching gateway behavior, and avoid broad `gateway-postpatch.sh` behavior hacks.
 
 CI polling (hard rule):
 - Never say "I'll keep polling" unless you are **already** running a blocking loop.

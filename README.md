@@ -666,10 +666,10 @@ If you override `programs.openclaw.package`, use `pkgs.openclawPackages.withTool
 
 **Goal:** `nix-openclaw` is a great Nix package. Automation, promotion, and fleet rollout live elsewhere.
 
-### Stable only (for now)
+### Stable release mirroring
 
-We ship a single pinned upstream commit:
-- **Stable**: last known-good pin. This is the default.
+We ship a single pinned upstream stable release:
+- **Stable**: latest mirrored OpenClaw stable release tag. This is the default.
 
 Outputs:
 ```
@@ -677,8 +677,9 @@ Outputs:
 .#openclaw-gateway
 ```
 
-Pin lives in:
+Pins live in:
 - `nix/sources/openclaw-source.nix`
+- `nix/packages/openclaw-app.nix`
 
 ### Responsibilities (who owns what)
 
@@ -686,14 +687,13 @@ Pin lives in:
 - **nix-openclaw**: Nix packaging, pins, CI builds.
 - **moltinators**: update cadence, smoke tests, promotion, rollout/rollback.
 
-### Automated pipeline (no manual steps)
+### Automated pipeline
 
-1) **moltinators updater** proposes a new stable pin.  
-2) **Garnix** builds the package on Linux + macOS and runs `pnpm test` on Linux.  
-   It also validates the generated Nix config options against the upstream schema.  
-3) **moltinators smoke test** runs against real Discord in `#moltinators-test`.  
-4) If green → promote to stable.  
-5) If red → keep current stable pin.
+1) Hourly **Yolo Update Pins** polls the latest non-prerelease OpenClaw GitHub release.  
+2) If the pinned stable release already matches that tag, it exits cleanly.  
+3) If a newer stable release exists, it updates the gateway source pin from the release tag ref, updates the app asset pin from the matching release zip, and regenerates config options from that same release source.  
+4) It pushes one release-mirroring commit to `main`.  
+5) Repository `CI` on Linux + macOS is the acceptance contract for that mirrored release.
 
 ---
 
