@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 769908ec3f713ecde067eb8c8aa54d8f57217aff. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 323493fa1b6adc1e10b9954a68d5eaa5a6ef1170. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -1441,6 +1441,35 @@ in
         type = t.nullOr (t.bool);
         default = null;
       };
+      startupContext = lib.mkOption {
+        type = t.nullOr (t.submodule { options = {
+        applyOn = lib.mkOption {
+          type = t.nullOr (t.listOf (t.oneOf [ (t.enum [ "new" ]) (t.enum [ "reset" ]) ]));
+          default = null;
+        };
+        dailyMemoryDays = lib.mkOption {
+          type = t.nullOr (t.int);
+          default = null;
+        };
+        enabled = lib.mkOption {
+          type = t.nullOr (t.bool);
+          default = null;
+        };
+        maxFileBytes = lib.mkOption {
+          type = t.nullOr (t.int);
+          default = null;
+        };
+        maxFileChars = lib.mkOption {
+          type = t.nullOr (t.int);
+          default = null;
+        };
+        maxTotalChars = lib.mkOption {
+          type = t.nullOr (t.int);
+          default = null;
+        };
+      }; });
+        default = null;
+      };
       subagents = lib.mkOption {
         type = t.nullOr (t.submodule { options = {
         allowAgents = lib.mkOption {
@@ -2685,6 +2714,10 @@ in
             default = null;
           };
           historySize = lib.mkOption {
+            type = t.nullOr (t.int);
+            default = null;
+          };
+          unknownToolThreshold = lib.mkOption {
             type = t.nullOr (t.int);
             default = null;
           };
@@ -6885,6 +6918,10 @@ in
         default = null;
       };
       historySize = lib.mkOption {
+        type = t.nullOr (t.int);
+        default = null;
+      };
+      unknownToolThreshold = lib.mkOption {
         type = t.nullOr (t.int);
         default = null;
       };
