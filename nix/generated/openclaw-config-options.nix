@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 8d67ee112fb0ccebf8f559be0df08b3b5938b708. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev d7d80c05c339c98f3a91dbc5834c1a1792e0d6e0. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -4969,6 +4969,14 @@ in
       };
       installs = lib.mkOption {
         type = t.nullOr (t.attrsOf (t.submodule { options = {
+        artifactFormat = lib.mkOption {
+          type = t.nullOr (t.oneOf [ (t.enum [ "zip" ]) (t.enum [ "tgz" ]) ]);
+          default = null;
+        };
+        artifactKind = lib.mkOption {
+          type = t.nullOr (t.oneOf [ (t.enum [ "legacy-zip" ]) (t.enum [ "npm-pack" ]) ]);
+          default = null;
+        };
         clawhubChannel = lib.mkOption {
           type = t.nullOr (t.oneOf [ (t.enum [ "official" ]) (t.enum [ "community" ]) (t.enum [ "private" ]) ]);
           default = null;
@@ -5026,6 +5034,18 @@ in
           default = null;
         };
         integrity = lib.mkOption {
+          type = t.nullOr (t.str);
+          default = null;
+        };
+        npmIntegrity = lib.mkOption {
+          type = t.nullOr (t.str);
+          default = null;
+        };
+        npmShasum = lib.mkOption {
+          type = t.nullOr (t.str);
+          default = null;
+        };
+        npmTarballName = lib.mkOption {
           type = t.nullOr (t.str);
           default = null;
         };
