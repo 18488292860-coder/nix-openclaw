@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 2be441062d7bb6d9ba5b58ea12f5ea3df2880696. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 1890d9668091052708de151597c62c318b3b4c0b. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -4966,6 +4966,22 @@ in
         };
         clawhubUrl = lib.mkOption {
           type = t.nullOr (t.str);
+          default = null;
+        };
+        clawpackManifestSha256 = lib.mkOption {
+          type = t.nullOr (t.str);
+          default = null;
+        };
+        clawpackSha256 = lib.mkOption {
+          type = t.nullOr (t.str);
+          default = null;
+        };
+        clawpackSize = lib.mkOption {
+          type = t.nullOr (t.int);
+          default = null;
+        };
+        clawpackSpecVersion = lib.mkOption {
+          type = t.nullOr (t.int);
           default = null;
         };
         gitCommit = lib.mkOption {
