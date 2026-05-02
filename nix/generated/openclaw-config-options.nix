@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev b21e312b1a6b4be1f4e052631daa1b7d9880fd9e. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 5eabb6e6973628d64e72f45e20ed6707c40b420e. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -251,6 +251,19 @@ in
         };
         reliability = lib.mkOption {
           type = t.nullOr (t.submodule { options = {
+          outputLimits = lib.mkOption {
+            type = t.nullOr (t.submodule { options = {
+            maxTurnLines = lib.mkOption {
+              type = t.nullOr (t.int);
+              default = null;
+            };
+            maxTurnRawChars = lib.mkOption {
+              type = t.nullOr (t.int);
+              default = null;
+            };
+          }; });
+            default = null;
+          };
           watchdog = lib.mkOption {
             type = t.nullOr (t.submodule { options = {
             fresh = lib.mkOption {
