@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev c850d1bb0ddf7197246859f7ad879207ef8ae9c0. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 63ff9244c711dfa0dc9dff72422b93e757813643. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -3760,7 +3760,42 @@ in
   };
 
   channels = lib.mkOption {
-    type = t.nullOr (t.anything);
+    type = t.nullOr (t.submodule { options = {
+    defaults = lib.mkOption {
+      type = t.nullOr (t.submodule { options = {
+      contextVisibility = lib.mkOption {
+        type = t.nullOr (t.enum [ "all" "allowlist" "allowlist_quote" ]);
+        default = null;
+      };
+      groupPolicy = lib.mkOption {
+        type = t.nullOr (t.enum [ "open" "disabled" "allowlist" ]);
+        default = null;
+      };
+      heartbeat = lib.mkOption {
+        type = t.nullOr (t.submodule { options = {
+        showAlerts = lib.mkOption {
+          type = t.nullOr (t.bool);
+          default = null;
+        };
+        showOk = lib.mkOption {
+          type = t.nullOr (t.bool);
+          default = null;
+        };
+        useIndicator = lib.mkOption {
+          type = t.nullOr (t.bool);
+          default = null;
+        };
+      }; });
+        default = null;
+      };
+    }; });
+      default = null;
+    };
+    modelByChannel = lib.mkOption {
+      type = t.nullOr (t.attrsOf (t.attrsOf (t.str)));
+      default = null;
+    };
+  }; });
     default = null;
   };
 
