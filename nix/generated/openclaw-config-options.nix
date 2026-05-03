@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 04c724bb0ce91522ecf7d381fa6433202f092caf. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev d4af125b52ef9248d2c4f94cb94c90262460c88d. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -6909,6 +6909,14 @@ in
         };
         allowPromptInjection = lib.mkOption {
           type = t.nullOr (t.bool);
+          default = null;
+        };
+        timeoutMs = lib.mkOption {
+          type = t.nullOr (t.int);
+          default = null;
+        };
+        timeouts = lib.mkOption {
+          type = t.nullOr (t.attrsOf (t.int));
           default = null;
         };
       }; });
