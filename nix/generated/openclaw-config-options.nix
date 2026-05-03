@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 6a3f5d0b1f3536435f8242be0c92eafc9c3a60f6. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev 188c3b74badc593c7a3b8152ee02c23f44a16294. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -127,10 +127,6 @@ in
       type = t.nullOr (t.submodule { options = {
       agentRuntime = lib.mkOption {
         type = t.nullOr (t.submodule { options = {
-        fallback = lib.mkOption {
-          type = t.nullOr (t.enum [ "pi" "none" ]);
-          default = null;
-        };
         id = lib.mkOption {
           type = t.nullOr (t.str);
           default = null;
@@ -600,10 +596,6 @@ in
       };
       embeddedHarness = lib.mkOption {
         type = t.nullOr (t.submodule { options = {
-        fallback = lib.mkOption {
-          type = t.nullOr (t.enum [ "pi" "none" ]);
-          default = null;
-        };
         runtime = lib.mkOption {
           type = t.nullOr (t.str);
           default = null;
@@ -1803,10 +1795,6 @@ in
       };
       agentRuntime = lib.mkOption {
         type = t.nullOr (t.submodule { options = {
-        fallback = lib.mkOption {
-          type = t.nullOr (t.enum [ "pi" "none" ]);
-          default = null;
-        };
         id = lib.mkOption {
           type = t.nullOr (t.str);
           default = null;
@@ -1845,10 +1833,6 @@ in
       };
       embeddedHarness = lib.mkOption {
         type = t.nullOr (t.submodule { options = {
-        fallback = lib.mkOption {
-          type = t.nullOr (t.enum [ "pi" "none" ]);
-          default = null;
-        };
         runtime = lib.mkOption {
           type = t.nullOr (t.str);
           default = null;
