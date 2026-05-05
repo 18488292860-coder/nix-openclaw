@@ -58,7 +58,7 @@ Git workflow:
 OpenClaw packaging:
 - The gateway package must include Control UI assets (run `pnpm ui:build` in the Nix build).
 - Product intent: ship a working Nix package for OpenClaw users, not just a pin mirror. `openclaw-gateway` is the source-built runnable gateway for Linux and macOS; `openclaw-app` is the Darwin-only desktop app from upstream's signed/notarized app artifact; `openclaw` is the batteries-included bundle.
-- User-facing docs should lead with one package: `openclaw`. Treat `openclaw-gateway`, `openclaw-tools`, and `openclaw-app` as advanced/component outputs for checks, modules, and debugging, not separate product tracks.
+- User-facing docs should lead with one package: `openclaw`. Treat `openclaw-gateway` and `openclaw-app` as advanced/component outputs for checks, modules, and debugging, not separate product tracks. Runtime tools are internal implementation detail, not a public package surface.
 - README should be agent-first: the main setup path is "tell your coding agent you want OpenClaw using Nix, then let it inspect/interview/configure/verify." Manual commands are reference material, not the primary onboarding path.
 - Do not split the repo into separate desktop/server tracks. Segment package outputs, keep one simple user-facing flake.
 - DJTBOT deployment freshness is downstream and out of scope unless explicitly requested; fix public packaging first.

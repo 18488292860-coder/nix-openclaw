@@ -1,6 +1,7 @@
 {
   lib,
-  buildEnv,
+  stdenvNoCC,
+  makeWrapper,
   openclaw-gateway,
   openclaw-app ? null,
   extendedTools ? [ ],
@@ -8,20 +9,34 @@
 }:
 
 let
-  appPaths = lib.optional (openclaw-app != null) openclaw-app;
-  appLinks = lib.optional (openclaw-app != null) "/Applications";
   bundleVersion =
     if version != null && version != "" then version else lib.getVersion openclaw-gateway;
+  toolsPath = lib.makeBinPath extendedTools;
 in
-buildEnv {
-  name = "openclaw-${bundleVersion}";
-  paths = [ openclaw-gateway ] ++ appPaths ++ extendedTools;
-  pathsToLink = [ "/bin" ] ++ appLinks;
+stdenvNoCC.mkDerivation {
+  pname = "openclaw";
+  version = bundleVersion;
+
+  dontUnpack = true;
+  dontConfigure = true;
+  dontBuild = true;
+
+  nativeBuildInputs = [ makeWrapper ];
+
+  env = {
+    OPENCLAW_APP_PACKAGE = lib.optionalString (openclaw-app != null) "${openclaw-app}";
+    OPENCLAW_GATEWAY_BIN = "${openclaw-gateway}/bin/openclaw";
+    OPENCLAW_TOOLS_PATH = toolsPath;
+    STDENV_SETUP = "${stdenvNoCC}/setup";
+  };
+
+  installPhase = "${../scripts/openclaw-batteries-install.sh}";
 
   meta = with lib; {
     description = "OpenClaw batteries-included bundle (gateway + app + tools)";
     homepage = "https://github.com/openclaw/openclaw";
     license = licenses.mit;
     platforms = platforms.darwin ++ platforms.linux;
+    mainProgram = "openclaw";
   };
 }

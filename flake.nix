@@ -75,6 +75,9 @@
           let
             baseChecks = {
               gateway = packageSetStable.openclaw-gateway;
+              bin-surface = pkgs.callPackage ./nix/checks/openclaw-bin-surface.nix {
+                openclawPackage = packageSetStable.openclaw;
+              };
               package-contents = pkgs.callPackage ./nix/checks/openclaw-package-contents.nix {
                 openclawGateway = packageSetStable.openclaw-gateway;
               };
@@ -114,7 +117,6 @@
               paths = [
                 packageSetStable.openclaw
                 packageSetStable.openclaw-gateway
-                packageSetStable.openclaw-tools
               ]
               ++ (builtins.attrValues baseChecks);
             };

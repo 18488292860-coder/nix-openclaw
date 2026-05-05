@@ -17,11 +17,6 @@ let
     pnpmDepsHash = sourceInfo.pnpmDepsHash or null;
   };
   openclawApp = if isDarwin then pkgs.callPackage ./openclaw-app.nix { } else null;
-  openclawTools = pkgs.buildEnv {
-    name = "openclaw-tools";
-    paths = toolSets.tools;
-    pathsToLink = [ "/bin" ];
-  };
   openclawBundle = pkgs.callPackage ./openclaw-batteries.nix {
     openclaw-gateway = openclawGateway;
     openclaw-app = openclawApp;
@@ -32,6 +27,5 @@ in
 {
   openclaw-gateway = openclawGateway;
   openclaw = openclawBundle;
-  openclaw-tools = openclawTools;
 }
 // (if isDarwin then { openclaw-app = openclawApp; } else { })

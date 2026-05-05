@@ -58,7 +58,7 @@ Bot: *runs whisper, sends you text*
 
 You talk to Telegram, your machine does things.
 
-**One flake, everything works.** Gateway + tools everywhere; macOS app on macOS.
+**One flake, everything works.** Gateway everywhere; runtime dependencies bundled; macOS app on macOS.
 
 **Plugins are self-contained.** Each plugin declares its CLI tools in Nix. You enable it, the build and wiring happens automatically.
 
@@ -132,7 +132,7 @@ Repository: github:openclaw/nix-openclaw
 
 What nix-openclaw is:
 - Batteries-included Nix package for OpenClaw (AI assistant gateway)
-- Installs gateway + tools everywhere; macOS app only on macOS
+- Installs the gateway everywhere; macOS app only on macOS
 - Runs as a launchd service on macOS, systemd user service on Linux
 
 What I need you to do:
@@ -616,26 +616,6 @@ programs.openclaw = {
 
 Plugins are keyed by their declared `name`. If two plugins declare the same name, the **last entry wins** (use this to override a prod plugin with a local dev one).
 
-### Tool overrides (avoid collisions)
-
-Home Manager auto-excludes `git` when `programs.git.enable = true`.
-
-Drop built-in tools that you already install elsewhere:
-
-```nix
-programs.openclaw.excludeTools = [ "git" "jq" "ripgrep" ];
-```
-
-Or provide a custom list:
-
-```nix
-programs.openclaw.toolNames = [ "nodejs_22" "pnpm_10" "summarize" ];
-```
-
-If you override `programs.openclaw.package`, use `pkgs.openclawPackages.withTools { ... }.openclaw` to apply these lists.
-
----
-
 ## Packaging & Updates
 
 **Goal:** `nix-openclaw` is a great Nix package. Automation, promotion, and fleet rollout live elsewhere.
@@ -655,11 +635,10 @@ Outputs:
 ```
 .#openclaw
 .#openclaw-gateway
-.#openclaw-tools
 .#openclaw-app   # Darwin only
 ```
 
-`.#openclaw-gateway`, `.#openclaw-tools`, and `.#openclaw-app` are component outputs for modules, CI, debugging, and advanced use. Start with `.#openclaw`.
+`.#openclaw-gateway` and `.#openclaw-app` are component outputs for modules, CI, debugging, and advanced use. Start with `.#openclaw`.
 
 Pins live in:
 - `nix/sources/openclaw-source.nix`
@@ -714,9 +693,8 @@ home-manager switch --rollback  # revert
 
 | Package | Contents |
 | --- | --- |
-| `openclaw` (default) | Canonical package. macOS: gateway + app + tools. Linux: gateway + tools. |
+| `openclaw` (default) | Canonical package. Exposes `openclaw`; keeps runtime tools internal. macOS also links the app. |
 | `openclaw-gateway` | Component output: gateway CLI/service only |
-| `openclaw-tools` | Component output: toolchain bundle |
 | `openclaw-app` | Component output: macOS app only |
 
 ### What we manage vs what you manage
@@ -731,9 +709,11 @@ home-manager switch --rollback  # revert
 | Anthropic API key | | ✓ |
 | Chat IDs | | ✓ |
 
-### Included tools
+### Runtime tools
 
 > **Platform note:** the toolchain is filtered per platform. macOS-only tools are skipped on Linux.
+
+The default `openclaw` package uses these tools internally and does not expose them as separate user commands.
 
 **Core**: nodejs, pnpm, git, curl, jq, python3, ffmpeg, sox, ripgrep
 
