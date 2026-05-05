@@ -151,12 +151,16 @@ const baseTypeForSchema = (schemaObj: JsonSchema, indent: string): string => {
 
   if (schema.anyOf && Array.isArray(schema.anyOf) && schema.anyOf.length > 0) {
     const entries = schema.anyOf as JsonSchema[];
+    const objectUnion = objectUnionTypeForSchemas(entries, indent);
+    if (objectUnion) return objectUnion;
     const parts = entries.map((entry) => `(${typeForSchema(entry, indent)})`).join(" ");
     return `t.oneOf [ ${parts} ]`;
   }
 
   if (schema.oneOf && Array.isArray(schema.oneOf) && schema.oneOf.length > 0) {
     const entries = schema.oneOf as JsonSchema[];
+    const objectUnion = objectUnionTypeForSchemas(entries, indent);
+    if (objectUnion) return objectUnion;
     const parts = entries.map((entry) => `(${typeForSchema(entry, indent)})`).join(" ");
     return `t.oneOf [ ${parts} ]`;
   }
@@ -196,6 +200,68 @@ const baseTypeForSchema = (schemaObj: JsonSchema, indent: string): string => {
     default:
       return "t.anything";
   }
+};
+
+const objectUnionTypeForSchemas = (entries: JsonSchema[], indent: string): string | null => {
+  const discriminator = "source";
+  const variants = entries.map((entry) => deref(entry, new Set()));
+  const propsByVariant = variants.map((entry) => (entry.properties as Record<string, JsonSchema>) || null);
+  if (propsByVariant.some((props) => props === null)) return null;
+  const requiredByVariant = variants.map((entry) => new Set((entry.required as string[]) || []));
+
+  const sourceValues = propsByVariant.map((props) => {
+    const source = deref((props as Record<string, JsonSchema>)[discriminator] || {}, new Set());
+    if (typeof source.const === "string") return source.const;
+    if (Array.isArray(source.enum) && source.enum.length === 1 && typeof source.enum[0] === "string") {
+      return source.enum[0] as string;
+    }
+    return null;
+  });
+  if (sourceValues.some((value) => value === null)) return null;
+
+  const uniqueSourceValues = Array.from(new Set(sourceValues as string[]));
+  if (uniqueSourceValues.length !== sourceValues.length) return null;
+  const keySets = propsByVariant.map((props) =>
+    Object.keys(props as Record<string, JsonSchema>).sort().join("\n")
+  );
+  if (new Set(keySets).size === 1) return null;
+
+  const merged: Record<string, JsonSchema[]> = {};
+  for (const props of propsByVariant as Record<string, JsonSchema>[]) {
+    for (const [key, value] of Object.entries(props)) {
+      if (!merged[key]) merged[key] = [];
+      merged[key].push(value);
+    }
+  }
+  const dedupeSchemas = (schemas: JsonSchema[]): JsonSchema[] => {
+    const byKey: Record<string, JsonSchema> = {};
+    for (const schema of schemas) {
+      byKey[JSON.stringify(deref(schema, new Set()))] = schema;
+    }
+    return Object.values(byKey);
+  };
+
+  const nextIndent = `${indent}  `;
+  const keys = Object.keys(merged).sort((a, b) => {
+    if (a === discriminator) return -1;
+    if (b === discriminator) return 1;
+    return a.localeCompare(b);
+  });
+  const inner = keys
+    .map((key) => {
+      if (key === discriminator) {
+        return renderOption(key, { enum: uniqueSourceValues }, true, nextIndent);
+      }
+      const schemas = dedupeSchemas(merged[key]);
+      const schema = schemas.length === 1 ? schemas[0] : { anyOf: schemas };
+      const required =
+        propsByVariant.every((props) => key in (props as Record<string, JsonSchema>)) &&
+        requiredByVariant.every((requiredKeys) => requiredKeys.has(key));
+      return renderOption(key, schema, required, nextIndent);
+    })
+    .join("\n");
+
+  return `t.submodule { options = {\n${inner}\n${indent}}; }`;
 };
 
 const objectTypeForSchema = (schema: JsonSchema, indent: string): string => {

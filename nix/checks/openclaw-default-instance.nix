@@ -169,11 +169,33 @@ let
       "Duplicate skill paths detected: ${customPluginSkill}"
       userPluginSkillCollisionEval;
 
+  secretProviderEval = moduleEval {
+    config.secrets.providers.test-file = {
+      source = "file";
+      path = "/tmp/openclaw-secrets.json";
+      mode = "json";
+    };
+  };
+  secretProviderConfig =
+    builtins.fromJSON
+      secretProviderEval.config.home.file.".openclaw/openclaw.json".text;
+  secretProviderCheck =
+    builtins.deepSeq (requireNoAssertionFailures "secrets.providers" secretProviderEval)
+      (
+        if
+          ((((secretProviderConfig.secrets or { }).providers or { }).test-file or { }).source == "file")
+        then
+          "ok"
+        else
+          throw "secrets.providers file variant missing from generated config."
+      );
+
   checkKey = builtins.deepSeq [
     defaultCheck
     customPluginCheck
     duplicateSkillCheck
     userPluginSkillCollisionCheck
+    secretProviderCheck
   ] "ok";
 
 in

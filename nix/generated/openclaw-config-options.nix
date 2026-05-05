@@ -6971,40 +6971,16 @@ in
       default = null;
     };
     providers = lib.mkOption {
-      type = t.nullOr (t.attrsOf (t.oneOf [ (t.submodule { options = {
+      type = t.nullOr (t.attrsOf (t.submodule { options = {
+      source = lib.mkOption {
+        type = t.enum [ "env" "file" "exec" ];
+      };
+      allowInsecurePath = lib.mkOption {
+        type = t.nullOr (t.bool);
+        default = null;
+      };
       allowlist = lib.mkOption {
         type = t.nullOr (t.listOf (t.str));
-        default = null;
-      };
-      source = lib.mkOption {
-        type = t.enum [ "env" ];
-      };
-    }; }) (t.submodule { options = {
-      allowInsecurePath = lib.mkOption {
-        type = t.nullOr (t.bool);
-        default = null;
-      };
-      maxBytes = lib.mkOption {
-        type = t.nullOr (t.int);
-        default = null;
-      };
-      mode = lib.mkOption {
-        type = t.nullOr (t.oneOf [ (t.enum [ "singleValue" ]) (t.enum [ "json" ]) ]);
-        default = null;
-      };
-      path = lib.mkOption {
-        type = t.str;
-      };
-      source = lib.mkOption {
-        type = t.enum [ "file" ];
-      };
-      timeoutMs = lib.mkOption {
-        type = t.nullOr (t.int);
-        default = null;
-      };
-    }; }) (t.submodule { options = {
-      allowInsecurePath = lib.mkOption {
-        type = t.nullOr (t.bool);
         default = null;
       };
       allowSymlinkCommand = lib.mkOption {
@@ -7016,7 +6992,8 @@ in
         default = null;
       };
       command = lib.mkOption {
-        type = t.str;
+        type = t.nullOr (t.str);
+        default = null;
       };
       env = lib.mkOption {
         type = t.nullOr (t.attrsOf (t.str));
@@ -7026,8 +7003,16 @@ in
         type = t.nullOr (t.bool);
         default = null;
       };
+      maxBytes = lib.mkOption {
+        type = t.nullOr (t.int);
+        default = null;
+      };
       maxOutputBytes = lib.mkOption {
         type = t.nullOr (t.int);
+        default = null;
+      };
+      mode = lib.mkOption {
+        type = t.nullOr (t.oneOf [ (t.enum [ "singleValue" ]) (t.enum [ "json" ]) ]);
         default = null;
       };
       noOutputTimeoutMs = lib.mkOption {
@@ -7038,8 +7023,9 @@ in
         type = t.nullOr (t.listOf (t.str));
         default = null;
       };
-      source = lib.mkOption {
-        type = t.enum [ "exec" ];
+      path = lib.mkOption {
+        type = t.nullOr (t.str);
+        default = null;
       };
       timeoutMs = lib.mkOption {
         type = t.nullOr (t.int);
@@ -7049,7 +7035,7 @@ in
         type = t.nullOr (t.listOf (t.str));
         default = null;
       };
-    }; }) ]));
+    }; }));
       default = null;
     };
     resolution = lib.mkOption {
