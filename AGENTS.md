@@ -76,9 +76,11 @@ Daily Codex maintainer automation:
 - The daily automation is an agentic maintainer run, not a passive alert and not a second release pipeline.
 - Product intent is simple: keep OpenClaw packaged with Nix for real users on macOS and Linux.
 - Start from upstream/yolo/CI state: inspect latest OpenClaw releases, recent **Yolo Update Pins** runs, recent `CI` runs, current pins, and `scripts/update-pins.sh select`.
+- macOS app publishing is out of scope for this repo and this automation. If upstream forgets to publish public macOS app assets, classify it as upstream release-contract lag and keep packaging the newest full packageable stable release.
 - If yolo and CI are healthy, report briefly and stop.
 - If broken, diagnose deeply and classify the failure: upstream release-contract lag, nix-openclaw packaging bug, CI infrastructure issue, or automation/repo-policy drift.
-- If the fix is in nix-openclaw, edit the repo, self-review the diff, run the full gate, commit directly to `main`, and push directly to `main`.
+- If the fix is in nix-openclaw, edit the repo, self-review the diff until the review has no actionable findings, run the full gate, commit directly to `main`, and push directly to `main`.
+- Full gate means the relevant targeted checks plus `scripts/check-flake-lock-owners.sh`, selector test, updater shell syntax, workflow YAML parse, `nix flake show --accept-flake-config`, Linux CI aggregator, Darwin CI aggregator when available, and `scripts/hm-activation-macos.sh` when a macOS runner is available.
 - No force push. No weakening checks to get green. No separate PR flow unless direct push is blocked by GitHub policy.
 - Do not create a competing release process; yolo remains the release updater. The daily run repairs the packaging/process when yolo cannot do its job.
 - If it cannot safely fix the issue, leave a concise report with evidence, the exact failing command/run, and the next concrete repair step.

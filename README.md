@@ -696,7 +696,7 @@ Pins live in:
 
 - **openclaw (upstream)**: source code, tests, releases.
 - **nix-openclaw**: Nix packaging, pins, CI builds.
-- **moltinators**: update cadence, smoke tests, promotion, rollout/rollback.
+- **release automation**: update cadence, smoke tests, promotion, rollout/rollback.
 
 ### Automated pipeline
 

@@ -346,3 +346,5 @@ New helper scripts should hide policy from callers. The selector should hide Git
 2026-05-05 / Codex: Added the daily maintainer automation contract to `AGENTS.md` and created Codex automation `nix-openclaw-maintainer` for 06:00 Europe/Amsterdam. The automation inspects upstream releases, yolo, CI, current pins, and selector output; if breakage belongs in nix-openclaw, it fixes, self-reviews, runs gates, commits to `main`, and pushes without opening a PR.
 
 2026-05-05 / Codex: Fresh self-review found that yolo promotion re-ran materialization after validation without proving the resulting patch was identical. The workflow now records Linux and macOS materialized diff digests and blocks direct-to-main promotion if promote re-materializes different pin/config changes.
+
+2026-05-05 / Codex: Recursive review moved this completed ExecPlan out of `.agent/execplan-pending.md`, clarified that macOS app publishing is out of scope for nix-openclaw automation, and added `scripts/hm-activation-macos.sh` to the durable daily maintainer gate.
