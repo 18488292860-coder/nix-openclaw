@@ -120,9 +120,15 @@ let
     if matching != [ ] then "ok" else throw "${name}: expected assertion containing `${needle}`.";
 
   defaultEval = moduleEval { };
+  defaultConfig = builtins.fromJSON defaultEval.config.home.file.".openclaw/openclaw.json".text;
   hasUnit = builtins.hasAttr "openclaw-gateway" defaultEval.config.systemd.user.services;
   defaultCheck = builtins.deepSeq (requireNoAssertionFailures "default instance" defaultEval) (
-    if hasUnit then "ok" else throw "Default OpenClaw instance missing systemd.unitName."
+    if !hasUnit then
+      throw "Default OpenClaw instance missing systemd.unitName."
+    else if (((defaultConfig.gateway or { }).mode or null) != "local") then
+      throw "Default OpenClaw instance missing gateway.mode."
+    else
+      "ok"
   );
 
   customPluginEval = moduleEval {

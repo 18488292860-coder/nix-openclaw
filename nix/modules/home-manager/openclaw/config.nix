@@ -99,7 +99,9 @@ let
       pluginPackages = plugins.pluginPackagesFor name;
       pluginEnvAll = plugins.pluginEnvAllFor name;
       mergedConfig0 = stripNulls (
-        lib.recursiveUpdate (lib.recursiveUpdate baseConfig cfg.config) inst.config
+        lib.recursiveUpdate (lib.recursiveUpdate baseConfig (stripNulls cfg.config)) (
+          stripNulls inst.config
+        )
       );
       existingWorkspace = (((mergedConfig0.agents or { }).defaults or { }).workspace or null);
       mergedConfig =
