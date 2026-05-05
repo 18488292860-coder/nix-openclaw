@@ -1,4 +1,4 @@
-# Generated from upstream OpenClaw schema at rev 46a04099a456fb125eb381a449571a9786311599. DO NOT EDIT.
+# Generated from upstream OpenClaw schema at rev a34d4ef9d9e772f1121525092928b9f423a546d8. DO NOT EDIT.
 # Generator: nix/scripts/generate-config-options.ts
 { lib }:
 let
@@ -4197,6 +4197,10 @@ in
         default = null;
       };
     }; });
+      default = null;
+    };
+    stuckSessionAbortMs = lib.mkOption {
+      type = t.nullOr (t.int);
       default = null;
     };
     stuckSessionWarnMs = lib.mkOption {
