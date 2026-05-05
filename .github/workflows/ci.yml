@@ -27,10 +27,10 @@ jobs:
       - name: Run Linux CI aggregator
         run: timeout --foreground 50m nix build .#checks.x86_64-linux.ci --accept-flake-config
 
-      - name: Dump failing gateway test log
+      - name: Dump failing source check log
         if: failure()
         run: |
-          drv="$(nix eval --raw .#checks.x86_64-linux.gateway-tests.drvPath --accept-flake-config)"
+          drv="$(nix eval --raw .#checks.x86_64-linux.source-checks.drvPath --accept-flake-config)"
           nix log "$drv" | tail -n 400 || true
 
   macos:

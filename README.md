@@ -673,6 +673,8 @@ That package tracks the newest upstream stable OpenClaw release that satisfies t
 - gateway starts and answers local health checks
 - macOS app artifact is available for the same release on Darwin
 
+The Nix gate is deliberately package-focused. It does not make the full upstream Vitest suite a hard promotion gate; upstream owns source test health, while `nix-openclaw` verifies the source build, generated config options, package contents, smoke startup, and module activation.
+
 Outputs:
 ```
 .#openclaw

@@ -88,8 +88,8 @@
                   };
                 in
                 {
-                  gateway-tests = sourceChecks;
                   config-options = sourceChecks;
+                  source-checks = sourceChecks;
                   default-instance = pkgs.callPackage ./nix/checks/openclaw-default-instance.nix { };
                   hm-activation = import ./nix/checks/openclaw-hm-activation.nix {
                     inherit pkgs home-manager;

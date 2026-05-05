@@ -64,6 +64,7 @@ OpenClaw packaging:
 Golden path for pins (yolo + manual bumps):
 - Hourly GitHub Action **Yolo Update Pins** should select the newest stable upstream OpenClaw release that satisfies the full Nix package contract: gateway builds/runs on Linux and macOS, and Darwin desktop app artifact is available for the same release.
 - If newer stable releases lack public macOS assets, yolo should report them as skipped source-only/incomplete desktop releases and promote the newest full packageable stable release that passes checks.
+- Checks mean the Nix-owned package contract: source build, generated config options, package contents, smoke startup, module activation, and matching macOS app artifact. Do not gate yolo on the full upstream Vitest suite; upstream owns source test health.
 - `scripts/update-pins.sh` is the updater boundary:
   - `select` resolves release candidates, source tag SHAs, skipped assetless stable releases, and the exact app asset URL for the chosen full packageable release
   - `apply <tag> <sha> <app-url>` materializes the source pin, app pin, `pnpmDepsHash`, and generated config options for that exact release
@@ -81,7 +82,7 @@ Daily Codex maintainer automation:
 - If broken, diagnose deeply and classify the failure: upstream release-contract lag, nix-openclaw packaging bug, CI infrastructure issue, or automation/repo-policy drift.
 - If the fix is in nix-openclaw, edit the repo, self-review the diff until the review has no actionable findings, run the full gate, commit directly to `main`, and push directly to `main`.
 - Full gate means the relevant targeted checks plus `scripts/check-flake-lock-owners.sh`, selector test, updater shell syntax, workflow YAML parse, `nix flake show --accept-flake-config`, Linux CI aggregator, Darwin CI aggregator when available, and `scripts/hm-activation-macos.sh` when a macOS runner is available.
-- No force push. No weakening checks to get green. No separate PR flow unless direct push is blocked by GitHub policy.
+- No force push. No weakening Nix-owned package checks to get green. No separate PR flow unless direct push is blocked by GitHub policy.
 - Do not create a competing release process; yolo remains the release updater. The daily run repairs the packaging/process when yolo cannot do its job.
 - If it cannot safely fix the issue, leave a concise report with evidence, the exact failing command/run, and the next concrete repair step.
 

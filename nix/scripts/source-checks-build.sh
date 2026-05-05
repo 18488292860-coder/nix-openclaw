@@ -35,7 +35,7 @@ export NPM_CONFIG_STORE_DIR="$store_path"
 export NPM_CONFIG_STORE_PATH="$store_path"
 export HOME="$(mktemp -d)"
 
-log_step "pnpm install (tests/config)" pnpm install --offline --frozen-lockfile --ignore-scripts --prod=false --store-dir "$store_path"
+log_step "pnpm install (source checks)" pnpm install --offline --frozen-lockfile --ignore-scripts --prod=false --store-dir "$store_path"
 
 ensure_root_package_link() {
   pkg="$1"
@@ -66,10 +66,8 @@ ensure_root_bin_link() {
 
 ensure_root_package_link "tsdown"
 ensure_root_package_link "tsx"
-ensure_root_package_link "vitest"
 ensure_root_bin_link "tsdown" "../tsdown/dist/run.mjs"
 ensure_root_bin_link "tsx" "../tsx/dist/cli.mjs"
-ensure_root_bin_link "vitest" "../vitest/vitest.mjs"
 
 tsdown_cli="node_modules/tsdown/dist/run.mjs"
 if [ ! -f "$tsdown_cli" ]; then

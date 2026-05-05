@@ -43,13 +43,13 @@ cp "$CONFIG_OPTIONS_GENERATOR" ./generate-config-options.ts
 cp "$NODE_ENGINE_CHECK" ./check-node-engine.ts
 
 if ! command -v node >/dev/null 2>&1; then
-  echo "node not found in PATH (run gateway-tests-build.sh first)" >&2
+  echo "node not found in PATH (run source-checks-build.sh first)" >&2
   exit 1
 fi
 
 tsx_cli="./node_modules/tsx/dist/cli.mjs"
 if [ ! -f "$tsx_cli" ]; then
-  echo "tsx CLI not found at $tsx_cli (run gateway-tests-build.sh first)" >&2
+  echo "tsx CLI not found at $tsx_cli (run source-checks-build.sh first)" >&2
   exit 1
 fi
 

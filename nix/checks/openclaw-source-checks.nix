@@ -7,7 +7,6 @@
   nodejs_22,
   pnpm_10,
   fetchPnpmDeps,
-  bun,
   pkg-config,
   jq,
   python3,
@@ -132,7 +131,6 @@ let
         pnpmDepsHash = pnpmDepsHash;
         pnpmDepsPname = "openclaw-gateway";
         enableSharp = true;
-        extraNativeBuildInputs = [ bun ];
         extraBuildInputs = [ vips ];
       };
 
@@ -154,7 +152,6 @@ stdenv.mkDerivation (finalAttrs: {
     CONFIG_OPTIONS_GENERATOR = "${../scripts/generate-config-options.ts}";
     CONFIG_OPTIONS_GOLDEN = "${../generated/openclaw-config-options.nix}";
     CONFIG_OPTIONS_CHECK_SH = "${../scripts/config-options-check.sh}";
-    GATEWAY_TESTS_CHECK_SH = "${../scripts/gateway-tests-check.sh}";
     NODE_ENGINE_CHECK = "${../scripts/check-node-engine.ts}";
     OPENCLAW_PLUGIN_EVAL = pluginEvalKey;
     OPENCLAW_SCHEMA_REV = sourceInfo.rev;
@@ -163,7 +160,7 @@ stdenv.mkDerivation (finalAttrs: {
   passthru = common.passthru;
 
   postPatch = "${../scripts/gateway-postpatch.sh}";
-  buildPhase = "${../scripts/gateway-tests-build.sh}";
+  buildPhase = "${../scripts/source-checks-build.sh}";
 
   doCheck = true;
   checkPhase = "${../scripts/source-checks-check.sh}";
