@@ -2,12 +2,14 @@ diff --git a/src/plugins/public-surface-loader.ts b/src/plugins/public-surface-l
 index 1f5b5ab..c9727e1 100644
 --- a/src/plugins/public-surface-loader.ts
 +++ b/src/plugins/public-surface-loader.ts
-@@ -116,13 +116,13 @@ export function loadBundledPluginPublicArtifactModuleSync<T extends object>(para
+@@ -116,13 +116,16 @@ export function loadBundledPluginPublicArtifactModuleSync<T extends object>(para
    if (cached) {
      return cached as T;
    }
 -
-+  const isPackagePublicSurface = location.boundaryRoot === OPENCLAW_PACKAGE_ROOT;
++  const packageRoot = path.resolve(OPENCLAW_PACKAGE_ROOT);
++  const resolvedModulePath = path.resolve(location.modulePath);
++  const isPackagePublicSurface = resolvedModulePath.startsWith(`${packageRoot}${path.sep}`);
 +
    const opened = openBoundaryFileSync({
      absolutePath: location.modulePath,
@@ -15,7 +17,8 @@ index 1f5b5ab..c9727e1 100644
 -    boundaryLabel:
 -      location.boundaryRoot === OPENCLAW_PACKAGE_ROOT ? "OpenClaw package root" : "plugin root",
 -    rejectHardlinks: true,
-+    boundaryLabel: isPackagePublicSurface ? "OpenClaw package root" : "plugin root",
++    boundaryLabel:
++      location.boundaryRoot === OPENCLAW_PACKAGE_ROOT ? "OpenClaw package root" : "plugin root",
 +    rejectHardlinks: !isPackagePublicSurface,
    });
    if (!opened.ok) {
