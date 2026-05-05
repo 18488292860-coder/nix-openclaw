@@ -304,17 +304,18 @@ Install wires up Twilio creds. Binary handles webhook server. Skill teaches agen
 
 ## The Plugin Ecosystem Vision
 
-**First-party plugins** already exist — see [nix-steipete-tools](https://github.com/openclaw/nix-steipete-tools/tree/main/tools):
+**First-party plugins** already exist — see [nix-openclaw-tools](https://github.com/openclaw/nix-openclaw-tools/tree/main/tools):
 - `summarize` — YouTube/article summarization
-- `oracle` — second-model review
+- `discrawl` — Discord archive/search
+- `wacrawl` — WhatsApp archive/search
 - `peekaboo` — screenshot capture
 - `camsnap` — webcam capture
-- `poltergeist` — browser automation
-- `sag` — web search
-- `bird` — Twitter/X integration
+- `poltergeist` — file watching and automation
+- `sag` — text-to-speech
 - `sonoscli` — Sonos control
 - `imsg` — iMessage integration
 - `gogcli` — Google Calendar
+- `goplaces` — Google Places
 
 All follow the same contract. All pinned in nix-openclaw. Enable with one line:
 ```nix

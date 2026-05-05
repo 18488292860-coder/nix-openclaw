@@ -1,6 +1,6 @@
 {
   pkgs,
-  steipetePkgs ? { },
+  openclawToolPkgs ? { },
   toolNamesOverride ? null,
   excludeToolNames ? [ ],
 }:
@@ -19,9 +19,9 @@ let
   pick =
     name:
     let
-      fromSteipete = pickFrom steipetePkgs name;
+      fromOpenClawTools = pickFrom openclawToolPkgs name;
     in
-    if fromSteipete != null then fromSteipete else pickFrom pkgs name;
+    if fromOpenClawTools != null then fromOpenClawTools else pickFrom pkgs name;
   ensure = names: safe (map pick names);
 
   baseNames = [
@@ -36,24 +36,13 @@ let
     "ripgrep"
   ];
 
-  pluginCatalog = import ../modules/home-manager/openclaw/plugin-catalog.nix;
-  bundledToolNames = lib.unique (map (plugin: plugin.tool) (builtins.attrValues pluginCatalog));
-
   extraNames = [
-    "go"
-    "uv"
-    "openai-whisper"
-    "spotify-player"
-    "openhue-cli"
-    "wacli"
-    "ordercli"
-    "blucli"
-    "eightctl"
-    "mcporter"
-    "qmd"
-    "nano-pdf"
-  ]
-  ++ bundledToolNames;
+    "gogcli"
+    "goplaces"
+    "summarize"
+    "camsnap"
+    "sonoscli"
+  ];
   toolNamesBase = if toolNamesOverride != null then toolNamesOverride else baseNames ++ extraNames;
   toolNames = builtins.filter (name: !builtins.elem name excludeToolNames) toolNamesBase;
 

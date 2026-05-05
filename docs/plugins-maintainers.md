@@ -129,7 +129,7 @@ openclawPlugin = {
 Host behavior: creates `~/.config/xuezh/config.json` from `settings`; exports both envs; fails if the pointed files are missing/empty.
 
 ## Bundled Plugin Set (current)
-- summarize, peekaboo, poltergeist, sag, camsnap, gogcli, goplaces, bird, sonoscli, imsg.
+- summarize, discrawl, wacrawl, peekaboo, poltergeist, sag, camsnap, gogcli, goplaces, sonoscli, imsg.
 - Source of truth: `nix/modules/home-manager/openclaw/plugin-catalog.nix`.
 - Each follows the same contract: packages + skills; env/state declared via `needs`; enabled via config toggle; sources pinned via the bundled plugin catalog.
 

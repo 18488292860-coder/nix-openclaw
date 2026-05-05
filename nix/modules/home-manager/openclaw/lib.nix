@@ -26,13 +26,13 @@ let
 
   bundledPluginSources =
     let
-      stepieteRev = "c110209720cbc6c87fccb6c1e1c2b79b1d719245";
-      stepieteNarHash = "sha256-1Vo7rcLGdKaqj39J3HhBKh8IbljSjgCUhinCFJbDPl8=";
-      stepiete =
+      openclawToolsRev = "08955054f466e2eb55628763c1d7ee2de5af9f6d";
+      openclawToolsNarHash = "sha256-IsgLwW0Y6JYiWXbxmzN1FDO0//Osu2YpeID1tFMbwkk=";
+      openclawTools =
         tool:
-        "github:openclaw/nix-steipete-tools?dir=tools/${tool}&rev=${stepieteRev}&narHash=${stepieteNarHash}";
+        "github:openclaw/nix-openclaw-tools?dir=tools/${tool}&rev=${openclawToolsRev}&narHash=${openclawToolsNarHash}";
     in
-    lib.mapAttrs (_name: plugin: plugin.source or (stepiete plugin.tool)) pluginCatalog;
+    lib.mapAttrs (_name: plugin: plugin.source or (openclawTools plugin.tool)) pluginCatalog;
 
   bundledPlugins = lib.filter (p: p != null) (
     lib.mapAttrsToList (

@@ -1,7 +1,17 @@
+{
+  openclawToolPkgs ? { },
+}:
 final: prev:
 let
-  packages = import ./packages { pkgs = prev; };
-  toolNames = (import ./tools/extended.nix { pkgs = prev; }).toolNames;
+  packages = import ./packages {
+    pkgs = prev;
+    openclawToolPkgs = openclawToolPkgs;
+  };
+  toolNames =
+    (import ./tools/extended.nix {
+      pkgs = prev;
+      openclawToolPkgs = openclawToolPkgs;
+    }).toolNames;
   withTools =
     {
       toolNamesOverride ? null,
@@ -9,6 +19,7 @@ let
     }:
     import ./packages {
       pkgs = prev;
+      openclawToolPkgs = openclawToolPkgs;
       inherit toolNamesOverride excludeToolNames;
     };
 in

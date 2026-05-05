@@ -5,6 +5,18 @@
     linux = true;
   };
 
+  discrawl = {
+    tool = "discrawl";
+    description = "Archive and search Discord history";
+    linux = true;
+  };
+
+  wacrawl = {
+    tool = "wacrawl";
+    description = "Archive and search WhatsApp Desktop history";
+    linux = true;
+  };
+
   peekaboo = {
     tool = "peekaboo";
     description = "Screenshot your screen";
@@ -13,7 +25,7 @@
 
   poltergeist = {
     tool = "poltergeist";
-    description = "Click, type, control macOS UI";
+    description = "File watching and automation";
     linux = false;
   };
 
@@ -40,12 +52,6 @@
     description = "Google Places API (New) CLI";
     defaultEnable = true;
     linux = true;
-  };
-
-  bird = {
-    tool = "bird";
-    description = "Twitter/X integration";
-    linux = false;
   };
 
   sonoscli = {

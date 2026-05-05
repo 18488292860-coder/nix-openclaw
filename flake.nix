@@ -13,7 +13,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    nix-steipete-tools.url = "github:openclaw/nix-steipete-tools";
+    nix-openclaw-tools.url = "github:openclaw/nix-openclaw-tools";
   };
 
   outputs =
@@ -22,10 +22,20 @@
       nixpkgs,
       flake-utils,
       home-manager,
-      nix-steipete-tools,
+      nix-openclaw-tools,
     }:
     let
-      overlay = import ./nix/overlay.nix;
+      openclawToolPkgsFor =
+        system:
+        if nix-openclaw-tools ? packages && builtins.hasAttr system nix-openclaw-tools.packages then
+          nix-openclaw-tools.packages.${system}
+        else
+          { };
+      overlay =
+        final: prev:
+        import ./nix/overlay.nix {
+          openclawToolPkgs = openclawToolPkgsFor prev.stdenv.hostPlatform.system;
+        } final prev;
       sourceInfoStable = import ./nix/sources/openclaw-source.nix;
       systems = [
         "x86_64-linux"
@@ -39,15 +49,11 @@
           inherit system;
           overlays = [ overlay ];
         };
-        steipetePkgs =
-          if nix-steipete-tools ? packages && builtins.hasAttr system nix-steipete-tools.packages then
-            nix-steipete-tools.packages.${system}
-          else
-            { };
+        openclawToolPkgs = openclawToolPkgsFor system;
         packageSetStable = import ./nix/packages {
           pkgs = pkgs;
           sourceInfo = sourceInfoStable;
-          steipetePkgs = steipetePkgs;
+          openclawToolPkgs = openclawToolPkgs;
         };
       in
       {
