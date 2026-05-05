@@ -82,6 +82,7 @@ let
     GATEWAY_PREBUILD_SH = "${../scripts/gateway-prebuild.sh}";
     PATCH_BUNDLED_RUNTIME_DEPS_SCRIPT = "${../patches/stage-bundled-plugin-runtime-deps.mjs}";
     PATCH_PUBLIC_SURFACE_HARDLINKS = "${../patches/allow-package-public-surface-hardlinks.patch}";
+    PATCH_SKIP_PLUGIN_AUTO_ENABLE_NIX_MODE = "${../patches/skip-plugin-auto-enable-persist-in-nix-mode.patch}";
     PROMOTE_PNPM_INTEGRITY_SH = "${../scripts/promote-pnpm-integrity.sh}";
     REMOVE_PACKAGE_MANAGER_FIELD_SH = "${../scripts/remove-package-manager-field.sh}";
     STDENV_SETUP = "${stdenv}/setup";

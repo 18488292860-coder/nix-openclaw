@@ -13,6 +13,10 @@ if [ -n "${PATCH_PUBLIC_SURFACE_HARDLINKS:-}" ]; then
   patch -p1 < "$PATCH_PUBLIC_SURFACE_HARDLINKS"
 fi
 
+if [ -n "${PATCH_SKIP_PLUGIN_AUTO_ENABLE_NIX_MODE:-}" ]; then
+  patch -p1 < "$PATCH_SKIP_PLUGIN_AUTO_ENABLE_NIX_MODE"
+fi
+
 if [ -f src/logging/logger.ts ]; then
   if ! grep -q "OPENCLAW_LOG_DIR" src/logging/logger.ts; then
     sed -i 's/export const DEFAULT_LOG_DIR = "\/tmp\/openclaw";/export const DEFAULT_LOG_DIR = process.env.OPENCLAW_LOG_DIR ?? "\/tmp\/openclaw";/' src/logging/logger.ts

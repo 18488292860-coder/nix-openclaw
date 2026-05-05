@@ -1,0 +1,25 @@
+diff --git a/src/gateway/server-startup-config.ts b/src/gateway/server-startup-config.ts
+index 00d9b3a..3f7ad25 100644
+--- a/src/gateway/server-startup-config.ts
++++ b/src/gateway/server-startup-config.ts
+@@ -313,6 +313,19 @@ export async function loadGatewayStartupConfigSnapshot(params: {
+     };
+   }
+-
++
++  if (isNixMode) {
++    params.log.warn(
++      `gateway: skipped plugin auto-enable persistence in Nix mode:\n${autoEnable.changes.map((entry) => `- ${entry}`).join("\n")}`,
++    );
++    return {
++      snapshot: configSnapshot,
++      wroteConfig,
++      ...(pluginMetadataSnapshot ? { pluginMetadataSnapshot } : {}),
++      ...(degradedStartupConfig ? { degradedProviderApi: true } : {}),
++      ...(degradedPluginConfig ? { degradedPluginConfig: true } : {}),
++    };
++  }
++
+   try {
+     await replaceConfigFile({
+       nextConfig: autoEnable.config,
