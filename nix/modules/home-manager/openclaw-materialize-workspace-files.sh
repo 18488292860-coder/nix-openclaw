@@ -1,18 +1,13 @@
 #!/bin/sh
 set -eu
 
-if [ "$#" -lt 3 ]; then
-  echo "usage: openclaw-materialize-workspace-files <manifest> <source> <target>..." >&2
+if [ "$#" -ne 2 ]; then
+  echo "usage: openclaw-materialize-workspace-files <state-manifest> <source-target-manifest>" >&2
   exit 1
 fi
 
 manifest="$1"
-shift
-
-if [ $(( $# % 2 )) -ne 0 ]; then
-  echo "openclaw-materialize-workspace-files requires source/target pairs" >&2
-  exit 1
-fi
+source_manifest="$2"
 
 manifest_dir="$(dirname "$manifest")"
 mkdir -p "$manifest_dir"
@@ -50,9 +45,10 @@ copy_path() {
   printf '%s\n' "$target" >> "$new_manifest"
 }
 
-while [ "$#" -gt 0 ]; do
-  copy_path "$1" "$2"
-  shift 2
-done
+while IFS="$(printf '\t')" read -r source target; do
+  if [ -n "$source" ] && [ -n "$target" ]; then
+    copy_path "$source" "$target"
+  fi
+done < "$source_manifest"
 
 sort -u "$new_manifest" > "$manifest"

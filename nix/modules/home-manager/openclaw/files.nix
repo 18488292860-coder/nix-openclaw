@@ -218,19 +218,20 @@ let
       [ ];
 
   materializedEntries = documentEntries ++ skillEntries;
-  materializedArgs =
+  materializedManifest =
     let
-      renderEntry =
-        entry: "${lib.escapeShellArg (toString entry.source)} ${lib.escapeShellArg entry.target}";
+      renderEntry = entry: "${entry.source}\t${entry.target}";
     in
-    lib.concatStringsSep " " (map renderEntry materializedEntries);
+    pkgs.writeText "openclaw-workspace-files.tsv" (
+      (lib.concatStringsSep "\n" (map renderEntry materializedEntries)) + "\n"
+    );
 
 in
 {
   inherit
     documentsEnabled
     documentsAssertions
-    materializedArgs
+    materializedManifest
     materializedEntries
     duplicateSkillAssertion
     ;

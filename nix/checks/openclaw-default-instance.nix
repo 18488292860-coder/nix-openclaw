@@ -148,11 +148,13 @@ let
     ];
   };
   customPluginSkill = ".openclaw/workspace/skills/skill";
-  customPluginTarget = "/tmp/${customPluginSkill}";
   customPluginActivation = builtins.toJSON customPluginEval.config.home.activation.openclawWorkspaceFiles;
-  hasCustomPluginSkill = lib.hasInfix customPluginTarget customPluginActivation;
+  hasCustomPluginMaterializer = lib.hasInfix "openclaw-materialize-workspace-files" customPluginActivation;
   customPluginCheck = builtins.deepSeq (requireNoAssertionFailures "customPlugins" customPluginEval) (
-    if hasCustomPluginSkill then "ok" else throw "customPlugins did not install ${customPluginSkill}."
+    if hasCustomPluginMaterializer then
+      "ok"
+    else
+      throw "customPlugins did not wire workspace file materialization."
   );
 
   duplicateSkillEval = moduleEval {

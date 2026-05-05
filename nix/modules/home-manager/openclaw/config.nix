@@ -299,7 +299,7 @@ in
 
     home.activation.openclawWorkspaceFiles = lib.mkIf (files.materializedEntries != [ ]) (
       lib.hm.dag.entryAfter [ "openclawDirs" ] ''
-        run --quiet ${../openclaw-materialize-workspace-files.sh} ${lib.escapeShellArg "${homeDir}/.local/state/nix-openclaw/managed-workspace-files"} ${files.materializedArgs}
+        run --quiet ${../openclaw-materialize-workspace-files.sh} ${lib.escapeShellArg "${homeDir}/.local/state/nix-openclaw/managed-workspace-files"} ${files.materializedManifest}
       ''
     );
 
