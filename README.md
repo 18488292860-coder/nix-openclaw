@@ -298,13 +298,13 @@ programs.openclaw.bundledPlugins.goplaces = {
 
 ### Adding community plugins
 
-Tell your agent: *"Add the plugin from github:owner/repo-name"*
+Tell your agent: *"Add the plugin from github:owner/repo-name and pin it."*
 
 Or add it manually to your config:
 
 ```nix
 customPlugins = [
-  { source = "github:owner/repo-name"; }
+  { source = "github:owner/repo-name?rev=<commit>&narHash=<narHash>"; }
 ];
 ```
 
@@ -318,7 +318,7 @@ Some plugins need settings (auth files, preferences). Here's a simplified exampl
 # Example: a padel court booking plugin (simplified for illustration)
 customPlugins = [
   {
-    source = "github:example/padel-cli";
+    source = "github:example/padel-cli?rev=<commit>&narHash=<narHash>";
     config = {
       env = {
         PADEL_AUTH_FILE = "~/.secrets/padel-auth";  # where your login token lives
@@ -422,9 +422,9 @@ openclawPlugin = {
 
 Standard plugin config shape (Nix-native, no JSON strings):
 
-plugins = [
+customPlugins = [
   {
-    source = "github:owner/my-plugin";
+    source = "github:owner/my-plugin?rev=<commit>&narHash=<narHash>";
     config = {
       env = {
         MYPLUGIN_AUTH_FILE = "/run/agenix/myplugin-auth";
@@ -493,10 +493,7 @@ The simplest setup:
       };
     };
 
-    # Built-ins (tools + skills) shipped via nix-steipete-tools.
-    plugins = [
-      { source = "github:openclaw/nix-steipete-tools?dir=tools/summarize"; }
-    ];
+    bundledPlugins.summarize.enable = true;
   };
 }
 ```
@@ -534,39 +531,37 @@ Uses `instances.default` to unlock per-group mention rules. If `instances` is se
       };
     };
 
+    bundledPlugins.peekaboo.enable = true;
+    customPlugins = [
+      { source = "github:joshp123/xuezh?rev=<commit>&narHash=<narHash>"; }
+      {
+        source = "github:joshp123/padel-cli?rev=<commit>&narHash=<narHash>";
+        config = {
+          env = { PADEL_AUTH_FILE = "/run/agenix/padel-auth"; };
+          settings = {
+            default_location = "CITY_NAME";
+            preferred_times = [ "18:00" "20:00" ];
+            preferred_duration = 90;
+            venues = [
+              {
+                id = "VENUE_ID";
+                alias = "VENUE_ALIAS";
+                name = "VENUE_NAME";
+                indoor = true;
+                timezone = "TIMEZONE";
+              }
+            ];
+          };
+        };
+      }
+    ];
+
     instances.default = {
       enable = true;
       package = pkgs.openclaw; # batteries-included
       stateDir = "~/.openclaw";
       workspaceDir = "~/.openclaw/workspace";
       launchd.enable = true;
-
-      # Plugins (prod: pinned GitHub). Built-ins are via nix-steipete-tools.
-      # MVP target: repo pointers resolve to tools + skills automatically.
-      plugins = [
-        { source = "github:openclaw/nix-steipete-tools?dir=tools/peekaboo"; }
-        { source = "github:joshp123/xuezh"; }
-        {
-          source = "github:joshp123/padel-cli";
-          config = {
-            env = { PADEL_AUTH_FILE = "/run/agenix/padel-auth"; };
-            settings = {
-              default_location = "CITY_NAME";
-              preferred_times = [ "18:00" "20:00" ];
-              preferred_duration = 90;
-              venues = [
-                {
-                  id = "VENUE_ID";
-                  alias = "VENUE_ALIAS";
-                  name = "VENUE_NAME";
-                  indoor = true;
-                  timezone = "TIMEZONE";
-                }
-              ];
-            };
-          };
-        }
-      ];
     };
   };
 }
@@ -604,7 +599,7 @@ let
     # Prod gateway pin (comes from nix-openclaw input @ v0.1.0 above).
     package = inputs.nix-openclaw.packages.${pkgs.system}.openclaw-gateway;
     config = prodConfig;
-    plugins = [ { source = "github:owner/your-plugin"; } ];
+    plugins = [ { source = "github:owner/your-plugin?rev=<commit>&narHash=<narHash>"; } ];
   };
 in {
   # Pinned macOS app (POC: no local app builds, uses nix-openclaw @ v0.1.0 above).
@@ -624,7 +619,7 @@ in {
       plugins = prod.plugins ++ [
         { source = "path:/Users/you/code/your-plugin"; }
         {
-          source = "github:joshp123/padel-cli";
+          source = "github:joshp123/padel-cli?rev=<commit>&narHash=<narHash>";
           config = {
             env = { PADEL_AUTH_FILE = "/run/agenix/padel-auth-dev"; };
             settings = {

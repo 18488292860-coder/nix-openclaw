@@ -2,10 +2,9 @@
   description = "OpenClaw local";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-openclaw.url = "github:openclaw/nix-openclaw";
+    nixpkgs.follows = "nix-openclaw/nixpkgs";
+    home-manager.follows = "nix-openclaw/home-manager";
   };
 
   outputs =
@@ -64,13 +63,7 @@
                 };
               };
 
-              instances.default = {
-                enable = true;
-                plugins = [
-                  # Example plugin without config:
-                  { source = "github:acme/hello-world"; }
-                ];
-              };
+              enable = true;
             };
           }
         ];

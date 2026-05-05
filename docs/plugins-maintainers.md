@@ -27,7 +27,7 @@ Host responsibilities (what the runtime guarantees):
 - Install `packages`; prepend to PATH for the gateway wrapper.
 - Create `needs.stateDirs` under `$HOME`.
 - Fail fast if any `requiredEnv` is unset or points to a missing/empty file.
-- Copy/symlink `skills` into `workspace/skills/<name>/...`.
+- Copy/symlink each `skills` entry into `workspace/skills/<skill-dir-basename>/...`.
 - If host config provides `config.settings`, render it to `config.json` in the first `stateDir`.
 - Export `config.env` (plus required envs) into the gateway wrapper.
 - Reject duplicate skill paths; duplicate plugin names: last entry wins.
@@ -36,9 +36,9 @@ Host responsibilities (what the runtime guarantees):
 When enabling a plugin, the host can supply:
 
 ```nix
-plugins = [
+programs.openclaw.customPlugins = [
   {
-    source = "github:owner/repo";
+    source = "github:owner/repo?rev=<commit>&narHash=<narHash>";
     config = {
       env = { KEY = "/run/agenix/key"; EXTRA = "/path/to/file"; };
       settings = { foo = "bar"; retries = 3; };
@@ -52,10 +52,10 @@ plugins = [
 - Invariant: providing `settings` requires at least one `stateDir`.
 
 ## Dev workflow (fast iteration)
-- Worktree: build and test plugins outside the core repo; point OpenClaw at a local path source (e.g., `source = "path:/Users/you/code/my-plugin"`).
+- Worktree: build and test plugins outside the core repo; point OpenClaw at a local path source during impure local dev (e.g., `source = "path:/Users/you/code/my-plugin"`). Committed config uses pinned refs.
 - Rebuild loop: change plugin → `home-manager switch` (or host-equivalent) → gateway restarts with new PATH/skills/config; no manual copying.
 - Name collisions: use the same plugin `name` to override a pinned version (last entry wins); keep unique names otherwise to avoid surprise overrides.
-- Skills placement: skills land under `~/.openclaw*/workspace/skills/<plugin>/...` so you can inspect quickly; delete the workspace to fully reset cached skills.
+- Skills placement: skills land under `~/.openclaw*/workspace/skills/<skill-dir-basename>/...` so you can inspect quickly; delete the workspace to fully reset cached skills.
 - Env guardrails: required env vars must point to files (non-empty) or the activation fails—supply temp files during dev to exercise the checks.
 - Settings JSON: inspect the rendered `config.json` in the first `stateDir` to confirm schema and defaults before committing.
 
@@ -65,9 +65,7 @@ plugins = [
 Enable (host side):
 
 ```nix
-programs.openclaw.instances.default.plugins = [
-  { source = "github:openclaw/nix-steipete-tools?dir=tools/summarize"; }
-];
+programs.openclaw.bundledPlugins.summarize.enable = true;
 ```
 
 Plugin contract (inside the plugin repo):
@@ -85,9 +83,9 @@ openclawPlugin = {
 Enable (host side):
 
 ```nix
-programs.openclaw.instances.default.plugins = [
+programs.openclaw.customPlugins = [
   {
-    source = "github:joshp123/xuezh";
+    source = "github:joshp123/xuezh?rev=<commit>&narHash=<narHash>";
     config = {
       env = {
         # Required envs (guarded as files):

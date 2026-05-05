@@ -2,10 +2,9 @@
   description = "nix-openclaw macOS Home Manager activation test";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-openclaw.url = "github:openclaw/nix-openclaw";
+    nixpkgs.follows = "nix-openclaw/nixpkgs";
+    home-manager.follows = "nix-openclaw/home-manager";
   };
 
   outputs =
@@ -41,10 +40,12 @@
                 installApp = false;
                 instances.default = {
                   gatewayPort = 18999;
+                  logPath = "/tmp/hm-activation-home/.openclaw/openclaw-gateway.log";
+                  launchd.label = "com.steipete.openclaw.gateway.hm-test";
                   config = {
                     logging = {
                       level = "debug";
-                      file = "/tmp/openclaw/openclaw-gateway.log";
+                      file = "/tmp/hm-activation-home/.openclaw/openclaw-gateway.log";
                     };
                     gateway = {
                       mode = "local";

@@ -130,27 +130,6 @@ let
     ) enabledInstances
   );
 
-  pluginSkillsFiles =
-    let
-      entriesForInstance =
-        instName: inst:
-        let
-          base = "${toRelative (resolvePath inst.workspaceDir)}/skills";
-          skillEntriesFor =
-            p:
-            map (skillPath: {
-              name = "${base}/${builtins.baseNameOf skillPath}";
-              value = {
-                source = skillPath;
-                recursive = true;
-              };
-            }) p.skills;
-          plugins = resolvedPluginsByInstance.${instName} or [ ];
-        in
-        lib.flatten (map skillEntriesFor plugins);
-    in
-    lib.listToAttrs (lib.flatten (lib.mapAttrsToList entriesForInstance enabledInstances));
-
   pluginConfigFiles =
     let
       entryFor =
@@ -185,33 +164,6 @@ let
     in
     lib.listToAttrs entries;
 
-  pluginSkillAssertions =
-    let
-      skillTargets = lib.flatten (
-        lib.concatLists (
-          lib.mapAttrsToList (
-            instName: inst:
-            let
-              base = "${toRelative (resolvePath inst.workspaceDir)}/skills";
-              plugins = resolvedPluginsByInstance.${instName} or [ ];
-            in
-            map (p: map (skillPath: "${base}/${p.name}/${builtins.baseNameOf skillPath}") p.skills) plugins
-          ) enabledInstances
-        )
-      );
-      counts = lib.foldl' (acc: path: acc // { "${path}" = (acc.${path} or 0) + 1; }) { } skillTargets;
-      duplicates = lib.attrNames (lib.filterAttrs (_: v: v > 1) counts);
-    in
-    if duplicates == [ ] then
-      [ ]
-    else
-      [
-        {
-          assertion = false;
-          message = "Duplicate skill paths detected: ${lib.concatStringsSep ", " duplicates}";
-        }
-      ];
-
   pluginGuards =
     let
       renderCheck = entry: ''
@@ -241,9 +193,7 @@ in
     pluginEnvFor
     pluginEnvAllFor
     pluginAssertions
-    pluginSkillsFiles
     pluginConfigFiles
-    pluginSkillAssertions
     pluginGuards
     ;
 }

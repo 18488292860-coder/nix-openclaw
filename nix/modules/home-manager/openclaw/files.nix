@@ -34,19 +34,30 @@ let
     in
     "${frontmatter}\n\n${body}\n";
 
-  skillAssertions =
+  duplicateSkillAssertion =
     let
-      names = map (skill: skill.name) cfg.skills;
-      nameCounts = lib.foldl' (acc: name: acc // { "${name}" = (acc.${name} or 0) + 1; }) { } names;
-      duplicateNames = lib.attrNames (lib.filterAttrs (_: v: v > 1) nameCounts);
+      targetsForInstance =
+        instName: inst:
+        let
+          base = "${toRelative (resolvePath inst.workspaceDir)}/skills";
+          userTargets = map (skill: "${base}/${skill.name}") cfg.skills;
+          pluginsForInstance = plugins.resolvedPluginsByInstance.${instName} or [ ];
+          pluginTargets = lib.flatten (
+            map (p: map (skillPath: "${base}/${builtins.baseNameOf skillPath}") p.skills) pluginsForInstance
+          );
+        in
+        userTargets ++ pluginTargets;
+      skillTargets = lib.flatten (lib.mapAttrsToList targetsForInstance enabledInstances);
+      counts = lib.foldl' (acc: path: acc // { "${path}" = (acc.${path} or 0) + 1; }) { } skillTargets;
+      duplicates = lib.attrNames (lib.filterAttrs (_: v: v > 1) counts);
     in
-    if duplicateNames == [ ] then
+    if duplicates == [ ] then
       [ ]
     else
       [
         {
           assertion = false;
-          message = "programs.openclaw.skills has duplicate names: ${lib.concatStringsSep ", " duplicateNames}";
+          message = "Duplicate skill paths detected: ${lib.concatStringsSep ", " duplicates}";
         }
       ];
 
@@ -246,7 +257,7 @@ in
     documentsAssertions
     documentsGuard
     documentsFiles
-    skillAssertions
+    duplicateSkillAssertion
     skillFiles
     ;
 }

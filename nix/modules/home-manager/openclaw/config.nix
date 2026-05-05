@@ -238,10 +238,14 @@ let
       appDefaults = appDefaults;
       appInstall = appInstall;
       package = package;
+      launchdLabel =
+        if pkgs.stdenv.hostPlatform.isDarwin && inst.launchd.enable then inst.launchd.label else null;
     };
 
   instanceConfigs = lib.mapAttrsToList mkInstanceConfig enabledInstances;
   appInstalls = lib.filter (item: item != null) (map (item: item.appInstall) instanceConfigs);
+  launchdLabels = lib.filter (label: label != null) (map (item: item.launchdLabel) instanceConfigs);
+  launchdLabelArgs = lib.concatStringsSep " " (map lib.escapeShellArg launchdLabels);
 
   appDefaults = lib.foldl' (acc: item: lib.recursiveUpdate acc item.appDefaults) { } instanceConfigs;
   appDefaultsEnabled = lib.filterAttrs (_: inst: inst.appDefaults.enable) enabledInstances;
@@ -256,9 +260,8 @@ in
       }
     ]
     ++ files.documentsAssertions
-    ++ files.skillAssertions
-    ++ plugins.pluginAssertions
-    ++ plugins.pluginSkillAssertions;
+    ++ files.duplicateSkillAssertion
+    ++ plugins.pluginAssertions;
 
     home.packages = lib.unique (
       (map (item: item.package) instanceConfigs)
@@ -334,7 +337,7 @@ in
 
     home.activation.openclawLaunchdRelink = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin (
       lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        /usr/bin/env bash ${../openclaw-launchd-relink.sh}
+        /usr/bin/env bash ${../openclaw-launchd-relink.sh} ${launchdLabelArgs}
       ''
     );
 
